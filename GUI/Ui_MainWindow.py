@@ -79,6 +79,8 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(1)
         sizePolicy.setHeightForWidth(self.FileInfoGroupBox.sizePolicy().hasHeightForWidth())
         self.FileInfoGroupBox.setSizePolicy(sizePolicy)
+        self.FileInfoGroupBox.setMinimumSize(QtCore.QSize(0, 120))
+        self.FileInfoGroupBox.setMaximumSize(QtCore.QSize(16777215, 150))
         self.FileInfoGroupBox.setObjectName("FileInfoGroupBox")
         self.FileInfoGroupBoxLayout = QtWidgets.QFormLayout(self.FileInfoGroupBox)
         self.FileInfoGroupBoxLayout.setObjectName("FileInfoGroupBoxLayout")

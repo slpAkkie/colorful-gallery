@@ -12,7 +12,7 @@ class Thumbnail(QToolButton):
 
     deleted = pyqtSignal(QWidget)
 
-    max_side_size: int = 1024
+    max_side_size: int = 1280
 
     origin_path: str
     pixmap: QPixmap
