@@ -12,6 +12,8 @@ class Thumbnail(QToolButton):
 
     deleted = pyqtSignal(QWidget)
 
+    max_side_size: int = 1024
+
     origin_path: str
     pixmap: QPixmap
     source_size: QSize
@@ -23,11 +25,11 @@ class Thumbnail(QToolButton):
         self.pixmap = QPixmap(path)
         self.source_size = self.pixmap.size()
         if self.pixmap.width() > self.pixmap.height():
-            if self.pixmap.width() > 1280:
-                self.pixmap = self.pixmap.scaledToWidth(1280)
+            if self.pixmap.width() > self.max_side_size:
+                self.pixmap = self.pixmap.scaledToWidth(self.max_side_size)
         else:
-            if self.pixmap.height() > 1280:
-                self.pixmap = self.pixmap.scaledToHeight(1280)
+            if self.pixmap.height() > self.max_side_size:
+                self.pixmap = self.pixmap.scaledToHeight(self.max_side_size)
         self.setScaledIcon(width)
         self.origin_path = path
 

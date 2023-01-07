@@ -20,7 +20,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     resized = pyqtSignal()
 
-    thumbnail_lists: dict
+    thumbnail_lists: dict[str, list[Thumbnail]]
+
+    current_list: str
 
     preview_thumbnail: Thumbnail | None = None
 
@@ -99,7 +101,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.__clear_thumbnail_area()
         self.thumbnail_lists['sortedByDominantColour'].sort(
-            key=lambda t: t.dominant_colour)
+            key=lambda t: t.dominant_colour)  # type: ignore
         self.__render_thumbnails('sortedByDominantColour')
 
         self.StatusBar.removeWidget(progress_bar)
@@ -118,9 +120,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.__set_preview(self.preview_thumbnail.pixmap)
                 self.set_pixmap_info(self.preview_thumbnail)
         else:
-            self.preview_thumbnail = self.sender()
-            self.__set_preview(self.preview_thumbnail.pixmap)
-            self.set_pixmap_info(self.preview_thumbnail)
+            self.preview_thumbnail = self.sender()  # type: ignore
+            self.__set_preview(self.preview_thumbnail.pixmap)  # type: ignore
+            self.set_pixmap_info(self.preview_thumbnail)  # type: ignore
 
         self.__resize_thumbnails()
 
@@ -239,28 +241,36 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def __delete_thumb(self, thumbnail):
         self.preview_thumbnail = None
+        self.__show_preview(True)
 
-        original_list = self.thumbnail_lists['original']
-        original_list.remove(thumbnail)
+        if thumbnail not in self.thumbnail_lists[self.current_list]:
+            return
 
-        self.resetThumbnailLists()
-        self.thumbnail_lists['original'] = original_list
+        deleted_index = self.thumbnail_lists[self.current_list].index(
+            thumbnail)
+
+        for i in self.thumbnail_lists.values():
+            if thumbnail in i:
+                i.remove(thumbnail)
 
         self.__remove_widget(thumbnail)
-        self.__clear_thumbnail_area()
-        self.__render_thumbnails()
+        # self.__clear_thumbnail_area()
+        self.__render_thumbnails(
+            list_name=self.current_list, start_from=deleted_index)
 
     def __remove_widget(self, widget):
         self.ThumbnailAreaLayout.removeWidget(widget)
-        # widget.deleteLater()
+        # widget.deleteLater() # This cause to exception that C\C++ wrapped object of type Thu,bnail has been deleted
 
     def __clear_thumbnail_area(self):
         for widget in self.thumbnail_lists['original']:
             self.__remove_widget(widget)
 
-    def __render_thumbnails(self, list_name: str = 'original'):
+    def __render_thumbnails(self, list_name: str = 'original', start_from: int = 0):
+        self.current_list = list_name
+
         thumbnails = self.thumbnail_lists[list_name]
-        for i in range(0, len(thumbnails)):
+        for i in range(start_from, len(thumbnails)):
             row = math.floor(i / 3)
             column = i % 3
 
