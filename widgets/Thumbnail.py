@@ -2,7 +2,7 @@ from send2trash import send2trash
 
 from PyQt6.QtCore import QSize, Qt, pyqtSignal
 from PyQt6.QtGui import QPixmap, QIcon, QAction, QCursor
-from PyQt6.QtWidgets import QToolButton, QMenu
+from PyQt6.QtWidgets import QToolButton, QMenu, QWidget
 from functions.getDominantColour import getDominantColour
 
 
@@ -10,7 +10,7 @@ class Thumbnail(QToolButton):
 
     context_menu: QMenu
 
-    deleted = pyqtSignal()
+    deleted = pyqtSignal(QWidget)
 
     origin_path: str
     pixmap: QPixmap
@@ -49,7 +49,7 @@ class Thumbnail(QToolButton):
 
     def _delete(self):
         send2trash(self.origin_path)
-        self.deleted.emit()
+        self.deleted.emit(self)
 
     def setScaledIcon(self, width):
         scaled_pixmap = self.pixmap.scaledToWidth(width)

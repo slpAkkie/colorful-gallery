@@ -37,7 +37,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def resetThumbnailLists(self):
         self.thumbnail_lists = {
             'original': list(),
-            'sortedByDominantColor': list()
+            'sortedByDominantColour': list()
         }
 
     def resizeEvent(self, event):
@@ -229,7 +229,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             thumbnail = Thumbnail(
                 self, entry.path, self.__get_thumbnail_width())
             thumbnail.clicked.connect(self.__show_preview)
-            thumbnail.deleted.connect(self.__refreshAction_trigerred)
+            thumbnail.deleted.connect(self.__delete_thumb)
 
             self.thumbnail_lists['original'].append(thumbnail)
             progress_bar.setValue(progress_bar.value() + 1)
@@ -237,10 +237,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.StatusBar.removeWidget(progress_bar)
         self.__render_thumbnails()
 
+    def __delete_thumb(self, thumbnail):
+        self.preview_thumbnail = None
+
+        original_list = self.thumbnail_lists['original']
+        original_list.remove(thumbnail)
+
+        self.resetThumbnailLists()
+        self.thumbnail_lists['original'] = original_list
+
+        self.__remove_widget(thumbnail)
+        self.__clear_thumbnail_area()
+        self.__render_thumbnails()
+
+    def __remove_widget(self, widget):
+        self.ThumbnailAreaLayout.removeWidget(widget)
+        # widget.deleteLater()
+
     def __clear_thumbnail_area(self):
         for widget in self.thumbnail_lists['original']:
-            self.ThumbnailAreaLayout.removeWidget(widget)
-            widget.deleteLater()
+            self.__remove_widget(widget)
 
     def __render_thumbnails(self, list_name: str = 'original'):
         thumbnails = self.thumbnail_lists[list_name]
