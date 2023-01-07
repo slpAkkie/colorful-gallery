@@ -1,8 +1,8 @@
 import math
 import os
 
-from PyQt6.QtWidgets import QMainWindow, QMessageBox, QLabel, QToolButton, QProgressBar
-from PyQt6.QtCore import pyqtSlot, QSize, pyqtSignal
+from PyQt6.QtWidgets import QMainWindow, QMessageBox, QProgressBar
+from PyQt6.QtCore import pyqtSlot, pyqtSignal, Qt
 from PyQt6.QtGui import QPixmap, QIcon
 
 from GUI.Ui_MainWindow import Ui_MainWindow
@@ -72,7 +72,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def __refreshAction_trigerred(self) -> None:
         """Refreshing list of images according to directory"""
         self.__set_directory_path(self.directory_path)
-        self.__show_preview()
+        self.__show_preview(True)
         self.__create_thumbnails()
 
     @pyqtSlot(name='on_OpenAction_triggered')
@@ -94,10 +94,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             thumbnail.determineDominantColour()
             progress_bar.setValue(progress_bar.value() + 1)
 
-        self.thumbnail_lists['sortedByDominantColour'] = self.thumbnail_lists['original'].copy()
+        self.thumbnail_lists['sortedByDominantColour'] = self.thumbnail_lists['original'].copy(
+        )
 
         self.__clear_thumbnail_area()
-        self.thumbnail_lists['sortedByDominantColour'].sort(key=lambda t: t.dominant_colour)
+        self.thumbnail_lists['sortedByDominantColour'].sort(
+            key=lambda t: t.dominant_colour)
         self.__render_thumbnails('sortedByDominantColour')
 
         self.StatusBar.removeWidget(progress_bar)
@@ -107,8 +109,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.__clear_thumbnail_area()
         self.__render_thumbnails('original')
 
-    def __show_preview(self):
-        if not isinstance(self.sender(), Thumbnail):
+    def __show_preview(self, set_empty: bool = False):
+        if not isinstance(self.sender(), Thumbnail) or set_empty:
             self.PreviewLabel.setText('Preview')
             self.set_pixmap_info()
 
@@ -227,6 +229,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             thumbnail = Thumbnail(
                 self, entry.path, self.__get_thumbnail_width())
             thumbnail.clicked.connect(self.__show_preview)
+            thumbnail.deleted.connect(self.__refreshAction_trigerred)
 
             self.thumbnail_lists['original'].append(thumbnail)
             progress_bar.setValue(progress_bar.value() + 1)
@@ -234,18 +237,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.StatusBar.removeWidget(progress_bar)
         self.__render_thumbnails()
 
-
-
     def __clear_thumbnail_area(self):
         for widget in self.thumbnail_lists['original']:
             self.ThumbnailAreaLayout.removeWidget(widget)
+            widget.deleteLater()
 
     def __render_thumbnails(self, list_name: str = 'original'):
-        for widget in self.thumbnail_lists[list_name]:
-            self.ThumbnailAreaLayout.addWidget(widget)
-            # Перенесення рядка в гріді
-        if len(self.thumbnail_lists[list_name]) % 3 != 0:
-            for i in range(0, 3 - len(self.thumbnail_lists[list_name]) % 3):
-                thumbnail = QLabel('', parent=self)
-                self.ThumbnailAreaLayout.addWidget(thumbnail)
-                self.ThumbnailAreaLayout.removeWidget(thumbnail)
+        thumbnails = self.thumbnail_lists[list_name]
+        for i in range(0, len(thumbnails)):
+            row = math.floor(i / 3)
+            column = i % 3
+
+            self.ThumbnailAreaLayout.addWidget(
+                thumbnails[i], row, column, Qt.AlignmentFlag.AlignTop)
