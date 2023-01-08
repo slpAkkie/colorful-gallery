@@ -1,7 +1,8 @@
 #ifndef ASKFOLDERWINDOW_H
 #define ASKFOLDERWINDOW_H
 
-#include <QString>
+#include <string>
+
 #include <QDialog>
 #include <QLineEdit>
 
@@ -19,7 +20,7 @@ public:
     explicit AskFolderWindow(QWidget *parent = nullptr);
     ~AskFolderWindow();
 
-    QString getPath();
+    string getPath();
 
 private:
     Ui::AskFolderWindow *ui;

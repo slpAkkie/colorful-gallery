@@ -2,14 +2,6 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="en_US">
 <context>
-    <name>FolderAskWindow</name>
-    <message>
-        <location filename="../layouts/FolderAskWindow.ui" line="20"/>
-        <source>window.title</source>
-        <translation>Choose gallery</translation>
-    </message>
-</context>
-<context>
     <name>GalleryWindow</name>
     <message>
         <location filename="../layouts/GalleryWindow.ui" line="20"/>

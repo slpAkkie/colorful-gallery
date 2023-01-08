@@ -24,14 +24,17 @@ public:
 private:
     Ui::GalleryWindow *ui;
     AskFolderWindow *askFolderWindow;
-    QString gallery_path;
-    map<std::string, std::vector<Thumbnnail*>> *Thumbnails;
+    string galleryPath;
+    map<string, vector<Thumbnnail*>> *Thumbnails;
 
+    void setupSlots();
     void resetThumbnails();
     void askForGalleryPath();
+    bool tryOpenGallery(string galleryPath);
 
 private slots:
     void askForGallery_Accepted();
+    void actionOpen_Triggered();
 };
 
 #endif // GALLERYWINDOW_H

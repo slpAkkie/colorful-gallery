@@ -1,9 +1,9 @@
 #include "ui_AskFolderWindow.h"
 #include "screens/AskFolderWindow.h"
 
-QString AskFolderWindow::getPath()
+string AskFolderWindow::getPath()
 {
-    return ui->InputPath->text();
+    return ui->InputPath->text().toStdString();
 }
 
 // Constructor of the Window
@@ -13,6 +13,11 @@ AskFolderWindow::AskFolderWindow(QWidget *parent)
 {
     // Setup UI from compiled .ui file
     this->ui->setupUi(this);
+
+    QPoint dialogCenter = mapToGlobal(rect().center());
+    QPoint parentWindowCenter = parent->window()->mapToGlobal(
+        parent->window()->rect().center());
+    move(parentWindowCenter - dialogCenter);
 }
 
 // Destructor of the Window
