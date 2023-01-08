@@ -58,10 +58,6 @@ void GalleryWindow::actionOpen_Triggered()
     this->askForGalleryPath();
 }
 
-void GalleryWindow::showEvent(QShowEvent* event) {
-    this->askForGalleryPath();
-}
-
 // Constructor of the Window
 GalleryWindow::GalleryWindow(QWidget *parent)
     // Inherit Frameless window and UI that was compiled from .ui file constructors
@@ -73,6 +69,7 @@ GalleryWindow::GalleryWindow(QWidget *parent)
     this->setupSlots();
 
     this->resetThumbnails();
+    this->askForGalleryPath();
 }
 
 // Destructor of the Window
