@@ -1,6 +1,11 @@
+
+build/
 .idea/
 .vscode/
 venv/
 __pycache__/
 
 .last_opened_gallery
+*.qm
+*.pro
+*pro.user
