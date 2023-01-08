@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>GalleryWindow</class>
+ <widget class="QMainWindow" name="GalleryWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>764</width>
+    <height>440</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>720</width>
+    <height>440</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>window.title</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../resources.qrc">
+    <normaloff>:/icons/sortable-gallery.png</normaloff>:/icons/sortable-gallery.png</iconset>
+  </property>
+  <property name="unifiedTitleAndToolBarOnMac">
+   <bool>true</bool>
+  </property>
+  <widget class="QSplitter" name="SplitterBody">
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <widget class="QWidget" name="ThumbnailsList" native="true">
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+      <horstretch>1</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>380</width>
+      <height>0</height>
+     </size>
+    </property>
+    <layout class="QGridLayout" name="ThumbnailsListLayout">
+     <item row="1" column="1">
+      <widget class="QScrollArea" name="ScrollAreaThumbnailList">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="horizontalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOff</enum>
+       </property>
+       <property name="widgetResizable">
+        <bool>true</bool>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
+       <widget class="QWidget" name="ThumbnailListContainer">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>360</width>
+          <height>374</height>
+         </rect>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <layout class="QGridLayout" name="ThumbnailListContainerLayout"/>
+       </widget>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="ThumbnailView" native="true">
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+      <horstretch>1</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>380</width>
+      <height>0</height>
+     </size>
+    </property>
+    <layout class="QVBoxLayout" name="ThumbnailViewLayout">
+     <item>
+      <widget class="QLabel" name="ThumbnailPreview">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>1</horstretch>
+         <verstretch>2</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="ThumbnailDetails">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>1</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>120</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>150</height>
+        </size>
+       </property>
+       <property name="title">
+        <string>group-box.fileinfo</string>
+       </property>
+       <layout class="QFormLayout" name="ThumbnailDetailsLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="LabelThumbnailFilenameTitle">
+          <property name="text">
+           <string>label.filename</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="LabelThumbnailFilenameValue">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="LabelThumbnailResolutionTitle">
+          <property name="text">
+           <string>label.resolution</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLabel" name="LabelThumbnailResolutionValue">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="MenuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>764</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="MenuFile">
+    <property name="title">
+     <string>menu.file</string>
+    </property>
+    <addaction name="ActionOpen"/>
+    <addaction name="ActionRefresh"/>
+    <addaction name="ActionClose"/>
+   </widget>
+   <widget class="QMenu" name="MenuSort">
+    <property name="title">
+     <string>menu.sort</string>
+    </property>
+    <addaction name="ActionByColor"/>
+    <addaction name="ActionUnsorted"/>
+   </widget>
+   <widget class="QMenu" name="MenuView">
+    <property name="title">
+     <string>menu.view</string>
+    </property>
+    <addaction name="ActionToggleFileInfo"/>
+   </widget>
+   <addaction name="MenuFile"/>
+   <addaction name="MenuSort"/>
+   <addaction name="MenuView"/>
+  </widget>
+  <widget class="QStatusBar" name="StatusBar"/>
+  <action name="ActionOpen">
+   <property name="text">
+    <string>menu.file.open</string>
+   </property>
+  </action>
+  <action name="ActionClose">
+   <property name="text">
+    <string>menu.file.close-folder</string>
+   </property>
+  </action>
+  <action name="ActionRefresh">
+   <property name="text">
+    <string>menu.file.reload</string>
+   </property>
+  </action>
+  <action name="ActionByColor">
+   <property name="text">
+    <string>action.sort.by-color</string>
+   </property>
+  </action>
+  <action name="ActionUnsorted">
+   <property name="text">
+    <string>action.sort.unsorted</string>
+   </property>
+  </action>
+  <action name="ActionToggleFileInfo">
+   <property name="text">
+    <string>action.view.toggle-fileinfo</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>
