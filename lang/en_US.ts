@@ -2,6 +2,14 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="en_US">
 <context>
+    <name>AskFolderWindow</name>
+    <message>
+        <location filename="../layouts/AskFolderWindow.ui" line="20"/>
+        <source>window.title</source>
+        <translation>Choose a gallery folder</translation>
+    </message>
+</context>
+<context>
     <name>GalleryWindow</name>
     <message>
         <location filename="../layouts/GalleryWindow.ui" line="20"/>
@@ -67,6 +75,16 @@
         <location filename="../layouts/GalleryWindow.ui" line="238"/>
         <source>action.view.toggle-fileinfo</source>
         <translation>Toggle File Info</translation>
+    </message>
+    <message>
+        <location filename="../screens/GalleryWindow.cpp" line="35"/>
+        <source>message-wrong.gallery-path.title</source>
+        <translation>Error in gallery path</translation>
+    </message>
+    <message>
+        <location filename="../screens/GalleryWindow.cpp" line="35"/>
+        <source>message-wrong.gallery-path.text</source>
+        <translation>The directory you specified does not seem to exist</translation>
     </message>
 </context>
 </TS>

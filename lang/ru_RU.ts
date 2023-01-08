@@ -2,6 +2,14 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ru_RU">
 <context>
+    <name>AskFolderWindow</name>
+    <message>
+        <location filename="../layouts/AskFolderWindow.ui" line="20"/>
+        <source>window.title</source>
+        <translation>Укажите путь к галереи</translation>
+    </message>
+</context>
+<context>
     <name>GalleryWindow</name>
     <message>
         <location filename="../layouts/GalleryWindow.ui" line="20"/>
@@ -67,6 +75,16 @@
         <location filename="../layouts/GalleryWindow.ui" line="238"/>
         <source>action.view.toggle-fileinfo</source>
         <translation>Переключить видимость информации о файле</translation>
+    </message>
+    <message>
+        <location filename="../screens/GalleryWindow.cpp" line="35"/>
+        <source>message-wrong.gallery-path.title</source>
+        <translation>Ошибка в пути</translation>
+    </message>
+    <message>
+        <location filename="../screens/GalleryWindow.cpp" line="35"/>
+        <source>message-wrong.gallery-path.text</source>
+        <translation>Путь, который вы указали не существует</translation>
     </message>
 </context>
 </TS>
