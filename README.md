@@ -27,4 +27,4 @@ Or use `pyuic6` from `pyqt6` package manually.
 
 ## Author
 
-Denyaev Vladislav (@WhiteFox123c)
+Denyaev Vladislav (@WhiteFox123c). `improvements - Alexandr Shamanin (@slpAkkie)`
