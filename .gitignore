@@ -77,7 +77,11 @@ CMakeLists.txt.user*
 .idea/
 .vscode/
 
+venv/
+
 # Build folders
 # --------
 build/
 
+# Additional app files
+.last_opened_gallery
