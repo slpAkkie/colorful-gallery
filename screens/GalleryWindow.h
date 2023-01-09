@@ -1,7 +1,11 @@
 #ifndef GALLERYWINDOW_H
 #define GALLERYWINDOW_H
 
+#define DEFAULT_COLUMN_AMOUNT 3
+#define DEFAULT_THUMBNAIL_LIST "default"
+
 #include <QMainWindow>
+#include <QProgressBar>
 
 #include "widgets/Thumbnail.h"
 #include "screens/AskFolderWindow.h"
@@ -42,6 +46,12 @@ private:
     Ui::GalleryWindow *ui;
 
     /**
+     * @brief progessBar
+     *      Progress bar in the status bar
+     */
+    QProgressBar *progessBar = nullptr;
+
+    /**
      * @brief askFolderWindow
      *      pointer to the window which asks user to gallery path
      */
@@ -58,6 +68,18 @@ private:
      *      available thumbnail lists
      */
     ThumbnailsContainer *Thumbnails = nullptr;
+
+    /**
+     * @brief currentList
+     *      list of thumbnails that now displayed
+     */
+    string currentList = DEFAULT_THUMBNAIL_LIST;
+
+    /**
+     * @brief columnAmount
+     *      amount of column in grid layout
+     */
+    int columnAmount = DEFAULT_COLUMN_AMOUNT;
 
     /**
      * @brief setupSlots
@@ -101,6 +123,33 @@ private:
      * @return true or false according to successfuly opened provided path
      */
     bool tryOpenGallery(string galleryPath);
+
+    /**
+     * @brief createProgressBar
+     *      creates new progress bar in statusbar of the window
+     * @param max
+     *      maximum value that progress bar can be set
+     */
+    QProgressBar* createProgressBar(int max);
+
+    /**
+     * @brief deleteProgressBar
+     *      deletes progress bar
+     */
+    void deleteProgressBar();
+
+    /**
+     * @brief getThumbnailColumnWidth
+     *      returns width to resize thumbnail for
+     * @return column width according to current window size
+     */
+    int getThumbnailColumnWidth();
+
+    /**
+     * @brief renderThumbnails
+     *      renders thumbnail widgets from current list
+     */
+    void renderThumbnails();
 
     /**
      * @brief loadGallery

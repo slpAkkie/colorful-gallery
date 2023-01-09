@@ -1,7 +1,11 @@
 #ifndef Thumbnail_H
 #define Thumbnail_H
 
+#define MAX_SIDE_SIZE 480
+
 #include <QToolButton>
+#include <QPixmap>
+#include <QSize>
 
 using namespace std;
 
@@ -23,12 +27,36 @@ public:
      */
     ~Thumbnail();
 
+    /**
+     * @brief load
+     *      loads image into pixmap
+     */
+    void load();
+
+    /**
+     * @brief srcSize
+     *      size of source image
+     */
+    QSize *srcSize = nullptr;
+
+    /**
+     * @brief resizeToWidth
+     *      resize tool button keep image ratio according to width
+     */
+    void resizeToWidth(int width);
+
 private:
     /**
      * @brief image_path
      *      path to the image
      */
-    string image_path;
+    string imagePath;
+
+    /**
+     * @brief pixmap
+     *      scaled pixmap
+     */
+    QPixmap *pixmap = nullptr;
 };
 
 #endif // Thumbnail_H

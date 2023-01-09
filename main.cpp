@@ -35,8 +35,8 @@ int main(int argc, char *argv[])
 #endif
 
     // Create a GalleryWindow and show it
-    GalleryWindow *w = new GalleryWindow();
-    w->show();
+    GalleryWindow *galleryWindow = new GalleryWindow();
+    galleryWindow->show();
 
     // Execute the app
     return app.exec();
