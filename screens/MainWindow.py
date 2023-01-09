@@ -1,5 +1,6 @@
 import math
 import os
+from random import shuffle
 
 from PyQt6.QtWidgets import QMainWindow, QMessageBox, QProgressBar
 from PyQt6.QtCore import pyqtSlot, pyqtSignal, Qt
@@ -51,7 +52,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def resetThumbnailLists(self):
         self.thumbnail_lists = {
             'original': list(),
-            'sortedByDominantColour': list()
+            'sortedByDominantColour': list(),
+            'shuffled': list()
         }
 
     def resizeEvent(self, event):
@@ -147,6 +149,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.__clear_thumbnail_area()
         self.__render_thumbnails()
         self.__resize_thumbnails()
+
+    @pyqtSlot(name='on_ShuffleAction_triggered')
+    def __ShuffleAction_triggered(self):
+        self.thumbnail_lists['shuffled'] = \
+            self.thumbnail_lists['original'].copy()
+        shuffle(self.thumbnail_lists['shuffled'])
+        self.__render_thumbnails('shuffled')
 
     @pyqtSlot(name='on_CloseAction_triggered')
     def __closeAction_triggered(self) -> None:
