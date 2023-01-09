@@ -5,6 +5,7 @@ from PyQt6.QtWidgets import QMainWindow, QMessageBox, QProgressBar
 from PyQt6.QtCore import pyqtSlot, pyqtSignal, Qt
 from PyQt6.QtGui import QPixmap, QIcon
 
+from functions.intervalFunc import setInterval
 from GUI.Ui_MainWindow import Ui_MainWindow
 from widgets.Thumbnail import Thumbnail
 from screens.LibraryChooseDialog import LibraryChooseDialog
@@ -30,6 +31,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     preview_thumbnail: Thumbnail | None = None
     privew_pixmap: QPixmap | None = None
+
+    stopSlideshow = None
+    currentSlide = None
+
+    spacePressing: bool = False
 
     def __init__(self, parent=None) -> None:
         """Setup UI objects and window settings"""
@@ -70,6 +76,60 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for thumbnail in self.thumbnail_lists['original']:
             thumbnail.setScaledIcon(self.__get_thumbnail_width())
 
+    def __set_current_thumbnail(self, thumbnail: Thumbnail | None):
+        if thumbnail is None:
+            self.preview_thumbnail = None
+            self.privew_pixmap = self.preview_thumbnail = None
+            return
+
+        self.preview_thumbnail = thumbnail
+        self.privew_pixmap = QPixmap(thumbnail.origin_path)
+        self.__show_preview()
+
+    def __stopSlideshow(self):
+        if self.stopSlideshow is not None:
+            self.stopSlideshow.set()
+            self.stopSlideshow = None
+
+    def keyPressEvent(self, event):
+        if event.isAutoRepeat():
+            return
+        self.spacePressing = event.key() == 32
+        print(self.spacePressing)
+
+    def keyReleaseEvent(self, event):
+        if event.isAutoRepeat():
+            return
+        self.spacePressing = False if event.key() == 32 else self.spacePressing
+        print(self.spacePressing)
+
+    @pyqtSlot(name='on_StopSlideshowAction_triggered')
+    def __StopSlideshowAction_triggered(self):
+        self.__stopSlideshow()
+
+    @pyqtSlot(name='on_SlideshowAction_triggered')
+    def __SlideshowAction_triggered(self) -> None:
+        currentList = self.thumbnail_lists[self.current_list]
+        self.currentSlide = 0
+        if self.preview_thumbnail:
+            self.currentSlide = currentList.index(self.preview_thumbnail)
+
+        def setSlide(slideIndex: int):
+            self.__set_current_thumbnail(currentList[slideIndex])
+
+        def next():
+            if self.currentSlide is None or self.spacePressing:
+                return
+
+            self.currentSlide += 1
+            if self.currentSlide >= len(currentList):
+                self.currentSlide = 0
+
+            setSlide(self.currentSlide)
+
+        setSlide(self.currentSlide)
+        self.stopSlideshow = setInterval(next, 2.5)
+
     @pyqtSlot(name='on_MoreColumnsAction_triggered')
     def __MoreColumnsAction_triggered(self) -> None:
         self.__setColumnDelta(1)
@@ -91,18 +151,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     @pyqtSlot(name='on_CloseAction_triggered')
     def __closeAction_triggered(self) -> None:
         """Closing opened directory and show an empty gallery"""
+        self.__stopSlideshow()
         self.__set_directory_path(None)
         self.__show_preview()
 
     @pyqtSlot(name='on_RefreshAction_triggered')
     def __refreshAction_trigerred(self) -> None:
         """Refreshing list of images according to directory"""
+        self.__stopSlideshow()
         self.__set_directory_path(self.directory_path)
         self.__show_preview(True)
         self.__create_thumbnails()
 
     @pyqtSlot(name='on_OpenAction_triggered')
     def __openAction_triggered(self):
+        self.__stopSlideshow()
         dialog_result = self.__open_ask_gallery_path_dialog()
         if dialog_result['accepted']:
             self.__set_directory_path(self.directory_path)
@@ -111,6 +174,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @pyqtSlot(name='on_ByColorAction_triggered')
     def __byColorAction_triggered(self):
+        self.__stopSlideshow()
         progress_bar = QProgressBar()
         progress_bar.setMaximum(len(self.thumbnail_lists['original']))
         progress_bar.setValue(0)
@@ -132,6 +196,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @pyqtSlot(name='on_UnsortedAction_triggered')
     def __unsortedAction_triggered(self):
+        self.__stopSlideshow()
         self.__clear_thumbnail_area()
         self.__render_thumbnails('original')
 
@@ -143,6 +208,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.PreviewLabel.clear()
 
         if isinstance(sender, Thumbnail):
+            self.__stopSlideshow()
+
             self.preview_thumbnail = sender
             self.set_pixmap_info(sender)
             self.__set_preview(QPixmap(sender.origin_path))
@@ -212,8 +279,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.directory_path = directory_path
         self.setWindowTitle(
             self.DEFAULT_WINDOW_TITLE if directory_path is None else directory_path)
-        self.preview_thumbnail = None
-        self.privew_pixmap = None
+        self.__set_current_thumbnail(None)
 
         with open(f'{os.getcwd()}/{GalleryConfig.SAVE_GALLERY_PATH}', 'w+') as file:
             file.write('' if directory_path is None else directory_path)

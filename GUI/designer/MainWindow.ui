@@ -237,6 +237,9 @@
     </property>
     <addaction name="MoreColumnsAction"/>
     <addaction name="LessColumnsAction"/>
+    <addaction name="separator"/>
+    <addaction name="SlideshowAction"/>
+    <addaction name="StopSlideshowAction"/>
    </widget>
    <addaction name="FileMenu"/>
    <addaction name="SortMenu"/>
@@ -276,6 +279,16 @@
   <action name="LessColumnsAction">
    <property name="text">
     <string>Less columns</string>
+   </property>
+  </action>
+  <action name="SlideshowAction">
+   <property name="text">
+    <string>Slideshow</string>
+   </property>
+  </action>
+  <action name="StopSlideshowAction">
+   <property name="text">
+    <string>Stop slideshow</string>
    </property>
   </action>
  </widget>
