@@ -16,6 +16,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     DEFAULT_WINDOW_TITLE: str = 'Empty gallery'
 
+    columns: int = 3
+
     directory_path: str | None = None
 
     resized = pyqtSignal()
@@ -31,6 +33,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super().__init__(parent)
         self.setupUi(self)
         self.resized.connect(self.__resized)
+        self.SplitterBody.splitterMoved.connect(self.__resized)
         self.resetThumbnailLists()
         self.setWindowTitle(self.DEFAULT_WINDOW_TITLE)
         self.setWindowIcon(
@@ -121,7 +124,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.set_pixmap_info(self.preview_thumbnail)
         else:
             self.preview_thumbnail = self.sender()  # type: ignore
-            self.__set_preview(self.preview_thumbnail.pixmap)  # type: ignore
+            # self.__set_preview(self.preview_thumbnail.pixmap)  # type: ignore
+            self.__set_preview(
+                QPixmap(self.preview_thumbnail.origin_path))  # type: ignore
             self.set_pixmap_info(self.preview_thumbnail)  # type: ignore
 
         self.__resize_thumbnails()
@@ -212,7 +217,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.__create_thumbnails()
 
     def __get_thumbnail_width(self) -> int:
-        return int(self.ThumbnailArea.width() / 3 - 12)
+        col_width = int(self.ThumbnailArea.width() / self.columns - 12)
+
+        return col_width
 
     def __create_thumbnails(self):
         progress_bar = QProgressBar()
@@ -271,8 +278,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         thumbnails = self.thumbnail_lists[list_name]
         for i in range(start_from, len(thumbnails)):
-            row = math.floor(i / 3)
-            column = i % 3
+            row = math.floor(i / self.columns)
+            column = i % self.columns
 
             self.ThumbnailAreaLayout.addWidget(
                 thumbnails[i], row, column, Qt.AlignmentFlag.AlignTop)

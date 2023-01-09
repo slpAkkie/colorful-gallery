@@ -1,3 +1,5 @@
+import math
+
 from send2trash import send2trash
 
 from PyQt6.QtCore import QSize, Qt, pyqtSignal
@@ -12,7 +14,7 @@ class Thumbnail(QToolButton):
 
     deleted = pyqtSignal(QWidget)
 
-    max_side_size: int = 1280
+    max_side_size: int = 480
 
     origin_path: str
     pixmap: QPixmap
@@ -54,8 +56,11 @@ class Thumbnail(QToolButton):
         self.deleted.emit(self)
 
     def setScaledIcon(self, width):
-        scaled_pixmap = self.pixmap.scaledToWidth(width)
-        size = QSize(width, scaled_pixmap.height())
+        width = self.pixmap.width() if width > self.pixmap.width() else width
+        # scaled_pixmap = self.pixmap.scaledToWidth(width)
+        scaled_pixmap = self.pixmap
+        size = QSize(width, math.floor(scaled_pixmap.height()
+                     * width / scaled_pixmap.width()))
         self.setFixedSize(size)
         self.setIconSize(size)
         self.setIcon(QIcon(scaled_pixmap))
