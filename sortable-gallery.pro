@@ -12,12 +12,12 @@ SOURCES += \
     main.cpp \
     screens/AskFolderWindow.cpp \
     screens/GalleryWindow.cpp \
-    widgets/Thumbnnail.cpp
+    widgets/Thumbnail.cpp
 
 HEADERS += \
     screens/AskFolderWindow.h \
     screens/GalleryWindow.h \
-    widgets/Thumbnnail.h
+    widgets/Thumbnail.h
 
 FORMS += \
     layouts/AskFolderWindow.ui \
@@ -32,6 +32,7 @@ RESOURCES += \
 
 CONFIG += lrelease
 CONFIG += embed_translations
+CONFIG += c++20
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

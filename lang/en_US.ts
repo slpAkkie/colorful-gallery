@@ -8,6 +8,21 @@
         <source>window.title</source>
         <translation>Choose a gallery folder</translation>
     </message>
+    <message>
+        <location filename="../layouts/AskFolderWindow.ui" line="34"/>
+        <source>btn.browse</source>
+        <translation>Browse</translation>
+    </message>
+    <message>
+        <location filename="../layouts/AskFolderWindow.ui" line="45"/>
+        <source>btn.apply</source>
+        <translation>Apply</translation>
+    </message>
+    <message>
+        <location filename="../screens/AskFolderWindow.cpp" line="31"/>
+        <source>title.select-folder</source>
+        <translation>Select folder for the gallery</translation>
+    </message>
 </context>
 <context>
     <name>GalleryWindow</name>
@@ -77,12 +92,12 @@
         <translation>Toggle File Info</translation>
     </message>
     <message>
-        <location filename="../screens/GalleryWindow.cpp" line="35"/>
+        <location filename="../screens/GalleryWindow.cpp" line="77"/>
         <source>message-wrong.gallery-path.title</source>
         <translation>Error in gallery path</translation>
     </message>
     <message>
-        <location filename="../screens/GalleryWindow.cpp" line="35"/>
+        <location filename="../screens/GalleryWindow.cpp" line="77"/>
         <source>message-wrong.gallery-path.text</source>
         <translation>The directory you specified does not seem to exist</translation>
     </message>

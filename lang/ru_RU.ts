@@ -8,6 +8,21 @@
         <source>window.title</source>
         <translation>Укажите путь к галереи</translation>
     </message>
+    <message>
+        <location filename="../layouts/AskFolderWindow.ui" line="34"/>
+        <source>btn.browse</source>
+        <translation>Обзор</translation>
+    </message>
+    <message>
+        <location filename="../layouts/AskFolderWindow.ui" line="45"/>
+        <source>btn.apply</source>
+        <translation>Принять</translation>
+    </message>
+    <message>
+        <location filename="../screens/AskFolderWindow.cpp" line="31"/>
+        <source>title.select-folder</source>
+        <translation>Выберите директорию для галереи</translation>
+    </message>
 </context>
 <context>
     <name>GalleryWindow</name>
@@ -77,12 +92,12 @@
         <translation>Переключить видимость информации о файле</translation>
     </message>
     <message>
-        <location filename="../screens/GalleryWindow.cpp" line="35"/>
+        <location filename="../screens/GalleryWindow.cpp" line="77"/>
         <source>message-wrong.gallery-path.title</source>
         <translation>Ошибка в пути</translation>
     </message>
     <message>
-        <location filename="../screens/GalleryWindow.cpp" line="35"/>
+        <location filename="../screens/GalleryWindow.cpp" line="77"/>
         <source>message-wrong.gallery-path.text</source>
         <translation>Путь, который вы указали не существует</translation>
     </message>
