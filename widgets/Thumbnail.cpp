@@ -6,24 +6,24 @@
  */
 void Thumbnail::load()
 {
-    this->pixmap = new QPixmap(QString::fromStdString(this->imagePath));
-    this->srcSize = new QSize(this->pixmap->size());
+    QPixmap pixmap(QString::fromStdString(this->imagePath));
+    this->srcSize = new QSize(pixmap.size());
 
     if (this->srcSize->width() > this->srcSize->height())
     {
         if (this->srcSize->width() > MAX_SIDE_SIZE)
         {
-            *this->pixmap = QPixmap(this->pixmap->scaledToWidth(MAX_SIDE_SIZE));
+            pixmap = QPixmap(pixmap.scaledToWidth(MAX_SIDE_SIZE));
         }
     }
     else {
         if (this->srcSize->height() > MAX_SIDE_SIZE)
         {
-            *this->pixmap = QPixmap(this->pixmap->scaledToHeight(MAX_SIDE_SIZE));
+            pixmap = QPixmap(pixmap.scaledToHeight(MAX_SIDE_SIZE));
         }
     }
 
-    this->setIcon(QIcon(*this->pixmap));
+    this->setIcon(QIcon(pixmap));
 }
 
 /**
@@ -36,11 +36,23 @@ void Thumbnail::resizeToWidth(int width)
 
     QSize newSize(
         width,
-        height < this->srcSize->height() ? height : this->srcSize->height()
+        height < MAX_SIDE_SIZE
+            ? height
+            : MAX_SIDE_SIZE
     );
 
     this->setFixedSize(newSize);
     this->setIconSize(newSize);
+}
+
+/**
+ * @brief getImagePath
+ *      returns source image path
+ * @return
+ */
+string Thumbnail::getImagePath()
+{
+    return this->imagePath;
 }
 
 /**
@@ -60,5 +72,5 @@ Thumbnail::Thumbnail(QWidget *parent, string path)
  */
 Thumbnail::~Thumbnail()
 {
-    delete this->pixmap;
+    delete this->srcSize;
 }

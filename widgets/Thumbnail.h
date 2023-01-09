@@ -45,18 +45,19 @@ public:
      */
     void resizeToWidth(int width);
 
+    /**
+     * @brief getImagePath
+     *      returns source image path
+     * @return
+     */
+    string getImagePath();
+
 private:
     /**
      * @brief image_path
      *      path to the image
      */
     string imagePath;
-
-    /**
-     * @brief pixmap
-     *      scaled pixmap
-     */
-    QPixmap *pixmap = nullptr;
 };
 
 #endif // Thumbnail_H

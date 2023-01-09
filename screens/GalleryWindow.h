@@ -82,6 +82,18 @@ private:
     int columnAmount = DEFAULT_COLUMN_AMOUNT;
 
     /**
+     * @brief previewPixmap
+     *      pixmap that currently on preview label
+     */
+    QPixmap *previewPixmap = nullptr;
+
+    /**
+     * @brief previewThumbnail
+     *  Thumbnail that currently using for preview
+     */
+    Thumbnail *previewThumbnail = nullptr;
+
+    /**
      * @brief setupSlots
      *      connects the slots to window's widgets and signals
      */
@@ -97,7 +109,7 @@ private:
 
     /**
      * @brief addThumbnail
-     *      add Thumbnail ibject to the list by name
+     *      add Thumbnail ibject to the list by nameMAGIC NUMBER: It fix theme scrollbar that too wide due to hide the thumbnail widgets a little bit
      * @param list_name
      * @param thumbnail
      */
@@ -146,16 +158,48 @@ private:
     int getThumbnailColumnWidth();
 
     /**
+     * @brief loadGallery
+     *      loads images from the directory
+     */
+    void loadGallery();
+
+    /**
      * @brief renderThumbnails
      *      renders thumbnail widgets from current list
      */
     void renderThumbnails();
 
     /**
-     * @brief loadGallery
-     *      loads images from the directory
+     * @brief clearThumbnailPreview
+     *      clears the tumbnail preview label pixmap and content at all
      */
-    void loadGallery();
+    void clearThumbnailPreview();
+
+    /**
+     * @brief renderPreviewForThumbnail
+     *      renders a preview image for provided Thumbnail object
+     * @param thumbnail
+     */
+    void renderPreviewForThumbnail(Thumbnail *thumbnail = nullptr);
+
+    /**
+     * @brief resizeLayout
+     *      resizes layout according to current window size
+     */
+    void resizeLayout();
+
+    /**
+     * @brief resetGallery
+     *      closes the opened gallery and clear all the content from it
+     */
+    void resetGallery();
+
+protected:
+    /**
+     * @brief resizeEvent
+     *      reimplements default empty resizeEvent
+     */
+    void resizeEvent(QResizeEvent* event) override;
 
 private slots:
     /**
@@ -169,6 +213,26 @@ private slots:
      *      handle signal when menu action Open is triggered
      */
     void actionOpen_Triggered();
+
+    /**
+     * @brief actionClose_Triggered
+     *      handle signal when menu action Close is triggered
+     */
+    void actionClose_Triggered();
+
+    /**
+     * @brief thumbnail_Clicked
+     *      handle signal when any thumbnail was clicked
+     */
+    void thumbnail_Clicked();
+
+    /**
+     * @brief splitterBody_Moved
+     *      handle splitter move event
+     * @param pos
+     * @param index
+     */
+    void splitterBody_Moved(int pos, int index);
 };
 
 #endif // GALLERYWINDOW_H

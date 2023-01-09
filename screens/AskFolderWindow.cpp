@@ -20,7 +20,7 @@ string AskFolderWindow::getPath()
  */
 void AskFolderWindow::setupSlots()
 {
-    this->connect(this->ui->ButtonBrowse, SIGNAL(clicked()), this, SLOT(buttonBrowse_clicked()));
+    QObject::connect(this->ui->ButtonBrowse, SIGNAL(clicked()), this, SLOT(buttonBrowse_clicked()));
 }
 
 /**
@@ -63,7 +63,8 @@ AskFolderWindow::AskFolderWindow(QWidget *parent)
 
     QPoint dialogCenter = mapToGlobal(rect().center());
     QPoint parentWindowCenter = parent->window()->mapToGlobal(
-        parent->window()->rect().center());
+                parent->window()->rect().center()
+    );
     move(parentWindowCenter - dialogCenter);
 
     this->setupSlots();

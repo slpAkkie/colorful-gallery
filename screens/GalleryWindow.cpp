@@ -8,12 +8,34 @@
 #include "screens/GalleryWindow.h"
 
 /**
+ * @brief resizeEvent
+ *      reimplements default empty resizeEvent
+ */
+void GalleryWindow::resizeEvent(QResizeEvent* event)
+{
+   QMainWindow::resizeEvent(event);
+
+   this->resizeLayout();
+}
+
+/**
  * @brief setupSlots
  *      connects the slots to window's widgets and signals
  */
 void GalleryWindow::setupSlots()
 {
-    this->connect(this->ui->ActionOpen, SIGNAL(triggered()), this, SLOT(actionOpen_Triggered()));
+    QObject::connect(
+        this->ui->ActionOpen, SIGNAL(triggered()),
+        this, SLOT(actionOpen_Triggered())
+    );
+    QObject::connect(
+        this->ui->ActionClose, SIGNAL(triggered()),
+        this, SLOT(actionClose_Triggered())
+    );
+    QObject::connect(
+        this->ui->SplitterBody, SIGNAL(splitterMoved(int,int)),
+        this, SLOT(splitterBody_Moved(int,int))
+    );
 }
 
 /**
@@ -54,6 +76,16 @@ void GalleryWindow::addThumbnail(string list_name, Thumbnail *thumbnail)
  */
 void GalleryWindow::clearThumbnails()
 {
+    if (this->Thumbnails != nullptr && this->Thumbnails->contains(DEFAULT_THUMBNAIL_LIST)) {
+        for (Thumbnail *thumbnail : *this->Thumbnails->at(DEFAULT_THUMBNAIL_LIST))
+        {
+            this->ui->ThumbnailListContainerLayout->removeWidget(thumbnail);
+            delete thumbnail;
+        }
+
+        this->Thumbnails->clear();
+    }
+
     this->newThumbnailList(DEFAULT_THUMBNAIL_LIST);
     this->newThumbnailList("dominantColour");
 }
@@ -69,7 +101,10 @@ void GalleryWindow::askForGalleryPath()
         this->askFolderWindow = new AskFolderWindow(this);
     }
 
-    this->connect(this->askFolderWindow, SIGNAL(accepted()), this, SLOT(askForGallery_Accepted()));
+    QObject::connect(
+        this->askFolderWindow, SIGNAL(accepted()),
+        this, SLOT(askForGallery_Accepted())
+    );
 
     this->askFolderWindow->show();
 }
@@ -117,6 +152,7 @@ QProgressBar* GalleryWindow::createProgressBar(int max)
 void GalleryWindow::deleteProgressBar()
 {
     delete this->progessBar;
+    this->progessBar = nullptr;
 }
 
 /**
@@ -126,7 +162,44 @@ void GalleryWindow::deleteProgressBar()
  */
 int GalleryWindow::getThumbnailColumnWidth()
 {
-    return this->ui->ThumbnailListContainer->width() / this->columnAmount;
+    /** MAGIC NUMBER: It fix theme scrollbar that too wide due to hide the thumbnail widgets a little bit */
+    return (this->ui->ThumbnailsList->width() - 64 ) / this->columnAmount;
+}
+
+/**
+ * @brief loadGallery
+ *      loads images from the directory
+ */
+void GalleryWindow::loadGallery()
+{
+    this->clearThumbnails();
+
+    // Create all the Thumbnails with the paths
+    for (filesystem::directory_entry const &entry : filesystem::directory_iterator(this->galleryPath))
+    {
+        if (filesystem::is_directory(entry)) continue;
+
+        string entryPath = entry.path().c_str();
+        Thumbnail *thumbnail = new Thumbnail (this, entryPath);
+        QObject::connect(thumbnail, SIGNAL(clicked()), this, SLOT(thumbnail_Clicked()));
+
+        this->addThumbnail(DEFAULT_THUMBNAIL_LIST, thumbnail);
+    }
+
+    // Then load images to it
+    int thumbnailCount = this->Thumbnails->at(DEFAULT_THUMBNAIL_LIST)->size();
+
+    QProgressBar *progressBar = this->createProgressBar(thumbnailCount);
+    this->ui->StatusBar->addWidget(progressBar);
+
+    for (Thumbnail *thumbnail : *this->Thumbnails->at(DEFAULT_THUMBNAIL_LIST))
+    {
+        thumbnail->load();
+        progressBar->setValue(progressBar->value() + 1);
+    }
+
+    this->ui->StatusBar->removeWidget(progressBar);
+    this->deleteProgressBar();
 }
 
 /**
@@ -151,33 +224,89 @@ void GalleryWindow::renderThumbnails()
 }
 
 /**
- * @brief loadGallery
- *      loads images from the directory
+ * @brief clearThumbnailPreview
+ *      clears the tumbnail preview label pixmap and content at all
  */
-void GalleryWindow::loadGallery()
+void GalleryWindow::clearThumbnailPreview()
 {
-    for (filesystem::directory_entry const &entry : filesystem::directory_iterator(this->galleryPath))
-    {
-        if (filesystem::is_directory(entry)) continue;
+    if (this->previewPixmap == nullptr) return;
 
-        string entryPath = entry.path().c_str();
-        this->addThumbnail(DEFAULT_THUMBNAIL_LIST, new Thumbnail (this, entryPath));
+    delete this->previewPixmap;
+    this->previewPixmap = nullptr;
+
+    this->ui->ThumbnailPreview->clear();
+}
+
+/**
+ * @brief renderPreviewForThumbnail
+ *      renders a preview image for provided Thumbnail object
+ * @param thumbnail
+ */
+void GalleryWindow::renderPreviewForThumbnail(Thumbnail *thumbnail)
+{
+    if (thumbnail == nullptr && this->previewPixmap == nullptr) return;
+
+    if (thumbnail != nullptr)
+    {
+        this->clearThumbnailPreview();
+
+        this->previewPixmap = new QPixmap(QString::fromStdString(thumbnail->getImagePath()));
     }
 
-    int thumbnailCount = this->Thumbnails->at(DEFAULT_THUMBNAIL_LIST)->size();
-    ThumbnailList *thumbnailList = this->Thumbnails->at(DEFAULT_THUMBNAIL_LIST);
+    int labelWidth = this->ui->ThumbnailPreview->width();
+    int labelHeight = this->ui->ThumbnailPreview->height();
 
-    QProgressBar *progressBar = this->createProgressBar(thumbnailCount);
-    this->ui->StatusBar->addWidget(progressBar);
+    QPixmap *labelPixmap;
 
-    for (int i = 0; i < thumbnailCount; i++)
+    if (labelWidth < labelHeight)
     {
-        thumbnailList->at(i)->load();
-        progressBar->setValue(progressBar->value() + 1);
+        labelPixmap = new QPixmap(this->previewPixmap->scaledToWidth(labelWidth));
+    }
+    else
+    {
+        labelPixmap = new QPixmap(this->previewPixmap->scaledToHeight(labelHeight));
     }
 
-    this->ui->StatusBar->removeWidget(progressBar);
-    this->deleteProgressBar();
+    if (labelPixmap->height() > labelHeight)
+    {
+        *labelPixmap = QPixmap(labelPixmap->scaledToHeight(labelHeight));
+    }
+    else if (labelPixmap->width() > labelWidth)
+    {
+        *labelPixmap = QPixmap(labelPixmap->scaledToWidth(labelWidth));
+    }
+
+    this->ui->ThumbnailPreview->setPixmap(*labelPixmap);
+
+    delete labelPixmap;
+}
+
+/**
+ * @brief resizeLayout
+ *      resizes layout according to current window size
+ */
+void GalleryWindow::resizeLayout()
+{
+    if (this->Thumbnails == nullptr) return;
+
+    this->renderPreviewForThumbnail();
+
+    for (Thumbnail *thumbnail : *this->Thumbnails->at(DEFAULT_THUMBNAIL_LIST))
+    {
+        thumbnail->resizeToWidth(this->getThumbnailColumnWidth());
+    }
+}
+
+/**
+ * @brief resetGallery
+ *      closes the opened gallery and clear all the content from it
+ */
+void GalleryWindow::resetGallery()
+{
+    this->clearThumbnailPreview();
+    this->clearThumbnails();
+
+    this->setWindowTitle(tr("window.title"));
 }
 
 /**
@@ -199,6 +328,7 @@ void GalleryWindow::askForGallery_Accepted()
         return;
     }
 
+    this->resetGallery();
     this->loadGallery();
     this->renderThumbnails();
 }
@@ -210,6 +340,39 @@ void GalleryWindow::askForGallery_Accepted()
 void GalleryWindow::actionOpen_Triggered()
 {
     this->askForGalleryPath();
+}
+
+/**
+ * @brief actionClose_Triggered
+ *      handle signal when menu action Close is triggered
+ */
+void GalleryWindow::actionClose_Triggered()
+{
+    this->resetGallery();
+}
+
+/**
+ * @brief thumbnail_Clicked
+ *      handle signal when any thumbnail was clicked
+ */
+void GalleryWindow::thumbnail_Clicked()
+{
+    Thumbnail *thumbnail = dynamic_cast<Thumbnail*>(this->sender());
+    if (thumbnail == nullptr) return;
+
+    this->previewThumbnail = thumbnail;
+    this->renderPreviewForThumbnail(thumbnail);
+}
+
+/**
+ * @brief resized
+ *      handle signal that something resized.
+ *      Spliter or Window or something else change the
+ *      layout size
+ */
+void GalleryWindow::splitterBody_Moved(int pos, int index)
+{
+    this->resizeLayout();
 }
 
 /**
@@ -227,7 +390,6 @@ GalleryWindow::GalleryWindow(QWidget *parent)
 
     this->setupSlots();
 
-    this->clearThumbnails();
     this->askForGalleryPath();
 }
 
@@ -236,9 +398,10 @@ GalleryWindow::GalleryWindow(QWidget *parent)
  */
 GalleryWindow::~GalleryWindow()
 {
-    // Delete UI to free up memory
     delete this->ui;
     delete this->progessBar;
     delete this->askFolderWindow;
     delete this->Thumbnails;
+    delete this->previewPixmap;
+    delete this->previewThumbnail;
 }
