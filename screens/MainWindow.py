@@ -17,6 +17,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     DEFAULT_WINDOW_TITLE: str = 'Empty gallery'
 
     columns: int = 3
+    max_columns: int = 8
+    min_columns: int = 1
 
     directory_path: str | None = None
 
@@ -66,6 +68,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def __resize_thumbnails(self):
         for thumbnail in self.thumbnail_lists['original']:
             thumbnail.setScaledIcon(self.__get_thumbnail_width())
+
+    @pyqtSlot(name='on_MoreColumnsAction_triggered')
+    def __MoreColumnsAction_triggered(self) -> None:
+        if self.columns + 1 > self.max_columns:
+            return
+
+        self.columns += 1
+        self.__clear_thumbnail_area()
+        self.__render_thumbnails()
+        self.__resize_thumbnails()
+
+    @pyqtSlot(name='on_LessColumnsAction_triggered')
+    def __LessColumnsAction_triggered(self) -> None:
+        if self.columns - 1 < self.min_columns:
+            return
+
+        self.columns -= 1
+        self.__clear_thumbnail_area()
+        self.__render_thumbnails()
+        self.__resize_thumbnails()
 
     @pyqtSlot(name='on_CloseAction_triggered')
     def __closeAction_triggered(self) -> None:
