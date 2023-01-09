@@ -108,7 +108,11 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <layout class="QGridLayout" name="ThumbnailAreaLayout"/>
+           <layout class="QGridLayout" name="ThumbnailAreaLayout">
+            <property name="sizeConstraint">
+             <enum>QLayout::SetMinAndMaxSize</enum>
+            </property>
+           </layout>
           </widget>
          </widget>
         </item>
@@ -133,11 +137,11 @@
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
             <horstretch>1</horstretch>
-            <verstretch>2</verstretch>
+            <verstretch>1</verstretch>
            </sizepolicy>
           </property>
-          <property name="text">
-           <string>Preview</string>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -146,7 +150,7 @@
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
-            <verstretch>1</verstretch>
+            <verstretch>0</verstretch>
            </sizepolicy>
           </property>
           <property name="minimumSize">

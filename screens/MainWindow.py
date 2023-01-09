@@ -29,6 +29,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     current_list: str
 
     preview_thumbnail: Thumbnail | None = None
+    privew_pixmap: QPixmap | None = None
 
     def __init__(self, parent=None) -> None:
         """Setup UI objects and window settings"""
@@ -71,20 +72,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @pyqtSlot(name='on_MoreColumnsAction_triggered')
     def __MoreColumnsAction_triggered(self) -> None:
-        if self.columns + 1 > self.max_columns:
-            return
-
-        self.columns += 1
-        self.__clear_thumbnail_area()
-        self.__render_thumbnails()
-        self.__resize_thumbnails()
+        self.__setColumnDelta(1)
 
     @pyqtSlot(name='on_LessColumnsAction_triggered')
     def __LessColumnsAction_triggered(self) -> None:
-        if self.columns - 1 < self.min_columns:
+        self.__setColumnDelta(-1)
+
+    def __setColumnDelta(self, delta: int):
+        if self.columns + delta < self.min_columns or self.columns + delta > self.max_columns:
             return
 
-        self.columns -= 1
+        self.columns += delta
+        self.ThumbnailAreaLayout
         self.__clear_thumbnail_area()
         self.__render_thumbnails()
         self.__resize_thumbnails()
@@ -137,21 +136,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.__render_thumbnails('original')
 
     def __show_preview(self, set_empty: bool = False):
-        if not isinstance(self.sender(), Thumbnail) or set_empty:
-            self.PreviewLabel.setText('Preview')
+        sender = self.sender()
+
+        if set_empty or not isinstance(sender, Thumbnail):
             self.set_pixmap_info()
+            self.PreviewLabel.clear()
 
-            if self.preview_thumbnail is not None:
-                self.__set_preview(self.preview_thumbnail.pixmap)
-                self.set_pixmap_info(self.preview_thumbnail)
+        if isinstance(sender, Thumbnail):
+            self.preview_thumbnail = sender
+            self.set_pixmap_info(sender)
+            self.__set_preview(QPixmap(sender.origin_path))
         else:
-            self.preview_thumbnail = self.sender()  # type: ignore
-            # self.__set_preview(self.preview_thumbnail.pixmap)  # type: ignore
-            self.__set_preview(
-                QPixmap(self.preview_thumbnail.origin_path))  # type: ignore
-            self.set_pixmap_info(self.preview_thumbnail)  # type: ignore
-
-        self.__resize_thumbnails()
+            if self.preview_thumbnail is not None and self.privew_pixmap is not None:
+                self.set_pixmap_info(self.preview_thumbnail)
+                self.__set_preview(self.privew_pixmap)
 
     def set_pixmap_info(self, thumbnail: Thumbnail | None = None):
         file_name = ''
@@ -167,21 +165,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.ResolutionLabel.setText(resolution)
 
     def __set_preview(self, pixmap: QPixmap):
-        preview: QPixmap
-        label_size = {
-            'width': self.PreviewLabel.width(),
-            'height': self.PreviewLabel.height()
-        }
+        self.privew_pixmap = preview = pixmap
+        w = self.PreviewLabel.width()
+        h = self.PreviewLabel.height()
 
-        if label_size['width'] < label_size['height']:
-            preview = pixmap.scaledToWidth(label_size['width'])
+        if w < h:
+            preview = pixmap.scaledToWidth(w)
         else:
-            preview = pixmap.scaledToHeight(label_size['height'])
+            preview = pixmap.scaledToHeight(h)
 
-        if preview.height() > label_size['height']:
-            preview = pixmap.scaledToHeight(label_size['height'])
-        elif preview.width() > label_size['width']:
-            preview = pixmap.scaledToWidth(label_size['width'])
+        if preview.height() > h:
+            preview = pixmap.scaledToHeight(h)
+        elif preview.width() > w:
+            preview = pixmap.scaledToWidth(w)
 
         self.PreviewLabel.setPixmap(preview)
 
@@ -217,6 +213,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setWindowTitle(
             self.DEFAULT_WINDOW_TITLE if directory_path is None else directory_path)
         self.preview_thumbnail = None
+        self.privew_pixmap = None
 
         with open(f'{os.getcwd()}/{GalleryConfig.SAVE_GALLERY_PATH}', 'w+') as file:
             file.write('' if directory_path is None else directory_path)
@@ -270,6 +267,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def __delete_thumb(self, thumbnail):
         self.preview_thumbnail = None
+        self.privew_pixmap = None
         self.__show_preview(True)
 
         if thumbnail not in self.thumbnail_lists[self.current_list]:
@@ -304,4 +302,4 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             column = i % self.columns
 
             self.ThumbnailAreaLayout.addWidget(
-                thumbnails[i], row, column, Qt.AlignmentFlag.AlignTop)
+                thumbnails[i], row, column, Qt.AlignmentFlag.AlignCenter)

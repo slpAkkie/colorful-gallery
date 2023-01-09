@@ -56,11 +56,11 @@ class Thumbnail(QToolButton):
         self.deleted.emit(self)
 
     def setScaledIcon(self, width):
-        width = self.pixmap.width() if width > self.pixmap.width() else width
-        # scaled_pixmap = self.pixmap.scaledToWidth(width)
         scaled_pixmap = self.pixmap
-        size = QSize(width, math.floor(scaled_pixmap.height()
-                     * width / scaled_pixmap.width()))
+        h = math.floor(scaled_pixmap.height()
+                       * width / scaled_pixmap.width())
+        size = QSize(width, h if h < scaled_pixmap.height()
+                     else scaled_pixmap.height())
         self.setFixedSize(size)
         self.setIconSize(size)
         self.setIcon(QIcon(scaled_pixmap))
