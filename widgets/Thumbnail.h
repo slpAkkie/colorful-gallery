@@ -28,16 +28,16 @@ public:
     ~Thumbnail();
 
     /**
-     * @brief load
-     *      loads image into pixmap
-     */
-    void load();
-
-    /**
      * @brief srcSize
      *      size of source image
      */
     QSize *srcSize = nullptr;
+
+    /**
+     * @brief load
+     *      loads image into pixmap
+     */
+    void load();
 
     /**
      * @brief resizeToWidth

@@ -33,61 +33,18 @@ void GalleryWindow::setupSlots()
         this, SLOT(actionClose_Triggered())
     );
     QObject::connect(
+        this->ui->ActionMoreColumns, SIGNAL(triggered()),
+        this, SLOT(actionMoreColumns_Triggered())
+    );
+    QObject::connect(
+        this->ui->ActionLessColumns, SIGNAL(triggered()),
+        this, SLOT(actionLessColumns_Triggered())
+    );
+
+    QObject::connect(
         this->ui->SplitterBody, SIGNAL(splitterMoved(int,int)),
         this, SLOT(splitterBody_Moved(int,int))
     );
-}
-
-/**
- * @brief newThumbnailList
- *      created new list in Thumbnails
- * @param name
- *      name for new list
- */
-void GalleryWindow::newThumbnailList(string name)
-{
-    if (this->Thumbnails == nullptr)
-    {
-        this->Thumbnails = new ThumbnailsContainer();
-    }
-
-    this->Thumbnails->emplace(name, new ThumbnailList());
-}
-
-/**
- * @brief addThumbnail
- *      add Thumbnail ibject to the list by name
- * @param list_name
- * @param thumbnail
- */
-void GalleryWindow::addThumbnail(string list_name, Thumbnail *thumbnail)
-{
-    if (!this->Thumbnails->contains(list_name))
-    {
-        this->newThumbnailList(list_name);
-    }
-
-    this->Thumbnails->at(list_name)->push_back(thumbnail);
-}
-
-/**
- * @brief clearThumbnails
- *      resets *Thumbnails to it's initial state
- */
-void GalleryWindow::clearThumbnails()
-{
-    if (this->Thumbnails != nullptr && this->Thumbnails->contains(DEFAULT_THUMBNAIL_LIST)) {
-        for (Thumbnail *thumbnail : *this->Thumbnails->at(DEFAULT_THUMBNAIL_LIST))
-        {
-            this->ui->ThumbnailListContainerLayout->removeWidget(thumbnail);
-            delete thumbnail;
-        }
-
-        this->Thumbnails->clear();
-    }
-
-    this->newThumbnailList(DEFAULT_THUMBNAIL_LIST);
-    this->newThumbnailList("dominantColour");
 }
 
 /**
@@ -127,6 +84,68 @@ bool GalleryWindow::tryOpenGallery(string galleryPath)
 }
 
 /**
+ * @brief resetGallery
+ *      closes the opened gallery and clear all the content from it
+ */
+void GalleryWindow::resetGallery()
+{
+    this->clearThumbnailPreview();
+    this->clearThumbnails();
+
+    this->setWindowTitle(tr("window.title"));
+}
+
+/**
+ * @brief clearThumbnailPreview
+ *      clears the tumbnail preview label pixmap and content at all
+ */
+void GalleryWindow::clearThumbnailPreview()
+{
+    if (this->previewPixmap == nullptr) return;
+
+    delete this->previewPixmap;
+    this->previewPixmap = nullptr;
+
+    this->ui->ThumbnailPreview->clear();
+}
+
+/**
+ * @brief clearThumbnails
+ *      resets *Thumbnails to it's initial state
+ */
+void GalleryWindow::clearThumbnails()
+{
+    if (this->Thumbnails != nullptr && this->Thumbnails->contains(DEFAULT_THUMBNAIL_LIST)) {
+        for (Thumbnail *thumbnail : *this->Thumbnails->at(DEFAULT_THUMBNAIL_LIST))
+        {
+            this->ui->ThumbnailListContainerLayout->removeWidget(thumbnail);
+            delete thumbnail;
+        }
+
+        this->Thumbnails->clear();
+    }
+
+    this->newThumbnailList(DEFAULT_THUMBNAIL_LIST);
+    this->newThumbnailList("dominantColour");
+}
+
+/**
+ * @brief addThumbnail
+ *      add Thumbnail ibject to the list by name
+ * @param list_name
+ * @param thumbnail
+ */
+void GalleryWindow::addThumbnail(string list_name, Thumbnail *thumbnail)
+{
+    if (!this->Thumbnails->contains(list_name))
+    {
+        this->newThumbnailList(list_name);
+    }
+
+    this->Thumbnails->at(list_name)->push_back(thumbnail);
+}
+
+/**
  * @brief createProgressBar
  *      creates new progress bar in statusbar of the window
  * @param max
@@ -142,6 +161,8 @@ QProgressBar* GalleryWindow::createProgressBar(int max)
         this->progessBar->setValue(0);
     }
 
+    this->ui->StatusBar->addWidget(this->progessBar);
+
     return this->progessBar;
 }
 
@@ -151,19 +172,10 @@ QProgressBar* GalleryWindow::createProgressBar(int max)
  */
 void GalleryWindow::deleteProgressBar()
 {
+    this->ui->StatusBar->removeWidget(this->progessBar);
+
     delete this->progessBar;
     this->progessBar = nullptr;
-}
-
-/**
- * @brief getThumbnailColumnWidth
- *      returns width to resize thumbnail for
- * @return column width according to current window size
- */
-int GalleryWindow::getThumbnailColumnWidth()
-{
-    /** MAGIC NUMBER: It fix theme scrollbar that too wide due to hide the thumbnail widgets a little bit */
-    return (this->ui->ThumbnailsList->width() - 64 ) / this->columnAmount;
 }
 
 /**
@@ -190,7 +202,6 @@ void GalleryWindow::loadGallery()
     int thumbnailCount = this->Thumbnails->at(DEFAULT_THUMBNAIL_LIST)->size();
 
     QProgressBar *progressBar = this->createProgressBar(thumbnailCount);
-    this->ui->StatusBar->addWidget(progressBar);
 
     for (Thumbnail *thumbnail : *this->Thumbnails->at(DEFAULT_THUMBNAIL_LIST))
     {
@@ -198,7 +209,6 @@ void GalleryWindow::loadGallery()
         progressBar->setValue(progressBar->value() + 1);
     }
 
-    this->ui->StatusBar->removeWidget(progressBar);
     this->deleteProgressBar();
 }
 
@@ -224,17 +234,30 @@ void GalleryWindow::renderThumbnails()
 }
 
 /**
- * @brief clearThumbnailPreview
- *      clears the tumbnail preview label pixmap and content at all
+ * @brief newThumbnailList
+ *      created new list in Thumbnails
+ * @param name
+ *      name for new list
  */
-void GalleryWindow::clearThumbnailPreview()
+void GalleryWindow::newThumbnailList(string name)
 {
-    if (this->previewPixmap == nullptr) return;
+    if (this->Thumbnails == nullptr)
+    {
+        this->Thumbnails = new ThumbnailsContainer();
+    }
 
-    delete this->previewPixmap;
-    this->previewPixmap = nullptr;
+    this->Thumbnails->emplace(name, new ThumbnailList());
+}
 
-    this->ui->ThumbnailPreview->clear();
+/**
+ * @brief getThumbnailColumnWidth
+ *      returns width to resize thumbnail for
+ * @return column width according to current window size
+ */
+int GalleryWindow::getThumbnailColumnWidth()
+{
+    /** MAGIC NUMBER: It fix theme scrollbar that too wide due to hide the thumbnail widgets a little bit */
+    return (this->ui->ThumbnailsList->width() - 64 ) / this->columnAmount;
 }
 
 /**
@@ -298,18 +321,6 @@ void GalleryWindow::resizeLayout()
 }
 
 /**
- * @brief resetGallery
- *      closes the opened gallery and clear all the content from it
- */
-void GalleryWindow::resetGallery()
-{
-    this->clearThumbnailPreview();
-    this->clearThumbnails();
-
-    this->setWindowTitle(tr("window.title"));
-}
-
-/**
  * @brief askForGallery_Accepted
  *      holds signal when askFolderWindow is accepted
  */
@@ -349,6 +360,32 @@ void GalleryWindow::actionOpen_Triggered()
 void GalleryWindow::actionClose_Triggered()
 {
     this->resetGallery();
+}
+
+/**
+ * @brief actionMoreColumns_Triggered
+ *      handle signal when menu action more columns is triggered
+ */
+void GalleryWindow::actionMoreColumns_Triggered()
+{
+    this->columnAmount++;
+
+    if (this->columnAmount > MAX_COLUMN_AMOUNT) this->columnAmount = MAX_COLUMN_AMOUNT;
+
+    this->renderThumbnails();
+}
+
+/**
+ * @brief actionMoreColumns_Triggered
+ *      handle signal when menu action more columns is triggered
+ */
+void GalleryWindow::actionLessColumns_Triggered()
+{
+    this->columnAmount--;
+
+    if (this->columnAmount < MIN_COLUMN_AMOUNT) this->columnAmount = MIN_COLUMN_AMOUNT;
+
+    this->renderThumbnails();
 }
 
 /**

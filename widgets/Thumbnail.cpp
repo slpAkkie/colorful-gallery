@@ -33,6 +33,9 @@ void Thumbnail::load()
 void Thumbnail::resizeToWidth(int width)
 {
     int height = this->srcSize->height() * width / this->srcSize->width();
+    int srcHeight = this->srcSize->height();
+
+    if (height > srcHeight) height = srcHeight;
 
     QSize newSize(
         width,

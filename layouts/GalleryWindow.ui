@@ -195,6 +195,9 @@
     <property name="title">
      <string>menu.view</string>
     </property>
+    <addaction name="ActionMoreColumns"/>
+    <addaction name="ActionLessColumns"/>
+    <addaction name="separator"/>
     <addaction name="ActionToggleFileInfo"/>
    </widget>
    <addaction name="MenuFile"/>
@@ -230,6 +233,16 @@
   <action name="ActionToggleFileInfo">
    <property name="text">
     <string>action.view.toggle-fileinfo</string>
+   </property>
+  </action>
+  <action name="ActionMoreColumns">
+   <property name="text">
+    <string>action.view.more-columns</string>
+   </property>
+  </action>
+  <action name="ActionLessColumns">
+   <property name="text">
+    <string>action.view.less-columns</string>
    </property>
   </action>
  </widget>

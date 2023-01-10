@@ -2,6 +2,8 @@
 #define GALLERYWINDOW_H
 
 #define DEFAULT_COLUMN_AMOUNT 3
+#define MAX_COLUMN_AMOUNT 8
+#define MIN_COLUMN_AMOUNT 1
 #define DEFAULT_THUMBNAIL_LIST "default"
 
 #include <QMainWindow>
@@ -37,6 +39,13 @@ public:
      * @brief Destructor of the Window
      */
     ~GalleryWindow();
+
+protected:
+    /**
+     * @brief resizeEvent
+     *      reimplements default empty resizeEvent
+     */
+    void resizeEvent(QResizeEvent* event) override;
 
 private:
     /**
@@ -100,6 +109,39 @@ private:
     void setupSlots();
 
     /**
+     * @brief askForGalleryPath
+     *      asks user to enter path for which gallery will be opened
+     */
+    void askForGalleryPath();
+
+    /**
+     * @brief tryOpenGallery
+     *      trying to open gallery for provided path and returns true on successful
+     * @param galleryPath
+     *      path to the folder for which gallery will be opened
+     * @return true or false according to successfuly opened provided path
+     */
+    bool tryOpenGallery(string galleryPath);
+
+    /**
+     * @brief resetGallery
+     *      closes the opened gallery and clear all the content from it
+     */
+    void resetGallery();
+
+    /**
+     * @brief clearThumbnailPreview
+     *      clears the tumbnail preview label pixmap and content at all
+     */
+    void clearThumbnailPreview();
+
+    /**
+     * @brief clearThumbnails
+     *      resets *Thumbnails to it's initial state
+     */
+    void clearThumbnails();
+
+    /**
      * @brief newThumbnailList
      *      created new list in Thumbnails
      * @param name
@@ -116,27 +158,6 @@ private:
     void addThumbnail(string list_name, Thumbnail *thumbnail);
 
     /**
-     * @brief clearThumbnails
-     *      resets *Thumbnails to it's initial state
-     */
-    void clearThumbnails();
-
-    /**
-     * @brief askForGalleryPath
-     *      asks user to enter path for which gallery will be opened
-     */
-    void askForGalleryPath();
-
-    /**
-     * @brief tryOpenGallery
-     *      trying to open gallery for provided path and returns true on successful
-     * @param galleryPath
-     *      path to the folder for which gallery will be opened
-     * @return true or false according to successfuly opened provided path
-     */
-    bool tryOpenGallery(string galleryPath);
-
-    /**
      * @brief createProgressBar
      *      creates new progress bar in statusbar of the window
      * @param max
@@ -151,13 +172,6 @@ private:
     void deleteProgressBar();
 
     /**
-     * @brief getThumbnailColumnWidth
-     *      returns width to resize thumbnail for
-     * @return column width according to current window size
-     */
-    int getThumbnailColumnWidth();
-
-    /**
      * @brief loadGallery
      *      loads images from the directory
      */
@@ -170,10 +184,11 @@ private:
     void renderThumbnails();
 
     /**
-     * @brief clearThumbnailPreview
-     *      clears the tumbnail preview label pixmap and content at all
+     * @brief getThumbnailColumnWidth
+     *      returns width to resize thumbnail for
+     * @return column width according to current window size
      */
-    void clearThumbnailPreview();
+    int getThumbnailColumnWidth();
 
     /**
      * @brief renderPreviewForThumbnail
@@ -187,19 +202,6 @@ private:
      *      resizes layout according to current window size
      */
     void resizeLayout();
-
-    /**
-     * @brief resetGallery
-     *      closes the opened gallery and clear all the content from it
-     */
-    void resetGallery();
-
-protected:
-    /**
-     * @brief resizeEvent
-     *      reimplements default empty resizeEvent
-     */
-    void resizeEvent(QResizeEvent* event) override;
 
 private slots:
     /**
@@ -219,6 +221,18 @@ private slots:
      *      handle signal when menu action Close is triggered
      */
     void actionClose_Triggered();
+
+    /**
+     * @brief actionMoreColumns_Triggered
+     *      handle signal when menu action more columns is triggered
+     */
+    void actionMoreColumns_Triggered();
+
+    /**
+     * @brief actionMoreColumns_Triggered
+     *      handle signal when menu action more columns is triggered
+     */
+    void actionLessColumns_Triggered();
 
     /**
      * @brief thumbnail_Clicked
