@@ -19,7 +19,7 @@ class Thumbnail(QToolButton):
     origin_path: str
     pixmap: QPixmap
     source_size: QSize
-    dominant_colour: int | None = None
+    dominant_colour: dict | None = None
 
     def __init__(self, parent, path, width):
         super().__init__(parent)
@@ -52,7 +52,7 @@ class Thumbnail(QToolButton):
         self.context_menu.exec(QCursor.pos())
 
     def _delete(self):
-        send2trash(self.origin_path)
+        send2trash(paths=self.origin_path)
         self.deleted.emit(self)
 
     def setScaledIcon(self, width):
@@ -68,3 +68,13 @@ class Thumbnail(QToolButton):
     def determineDominantColour(self):
         if self.dominant_colour is None:
             self.dominant_colour = getDominantColour(self.pixmap)
+
+    def getHSLsortableString(self):
+        if self.dominant_colour is None:
+            return ""
+
+        return "{}{}{}".format(
+            str(self.dominant_colour['h']).zfill(3),
+            str(self.dominant_colour['l']).zfill(3),
+            str(self.dominant_colour['s']).zfill(3),
+        )

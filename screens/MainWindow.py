@@ -49,6 +49,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setWindowIcon(
             QIcon(':/theme/icons/red-panda.png'))
 
+        self.FileInfoGroupBox.setHidden(True)
+
     def resetThumbnailLists(self):
         self.thumbnail_lists = {
             'original': list(),
@@ -197,8 +199,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
 
         self.__clear_thumbnail_area()
+
         self.thumbnail_lists['sortedByDominantColour'].sort(
-            key=lambda t: t.dominant_colour)  # type: ignore
+            key=lambda t: t.getHSLsortableString())
         self.__render_thumbnails('sortedByDominantColour')
 
         self.StatusBar.removeWidget(progress_bar)
@@ -231,11 +234,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         file_name = ''
         resolution = ''
 
+        self.StatusBar.clearMessage()
+
         if thumbnail is not None:
             file_name = os.path.basename(thumbnail.origin_path)
             if len(file_name) > 20:
                 file_name = file_name[0:15] + '...' + file_name.split('.')[-1]
             resolution = f'{thumbnail.source_size.width()}x{thumbnail.source_size.height()}'
+
+            self.StatusBar.showMessage(thumbnail.getHSLsortableString())
 
         self.FileNameLabel.setText(file_name)
         self.ResolutionLabel.setText(resolution)
