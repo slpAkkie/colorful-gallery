@@ -149,7 +149,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.columns += delta
         self.ThumbnailAreaLayout
         self.__clear_thumbnail_area()
-        self.__render_thumbnails()
+        self.__render_thumbnails(self.current_list)
         self.__resize_thumbnails()
 
     @pyqtSlot(name='on_ShuffleAction_triggered')
