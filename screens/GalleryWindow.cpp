@@ -90,12 +90,12 @@ void GalleryWindow::askForGalleryPath()
     if (this->askFolderWindow == nullptr)
     {
         this->askFolderWindow = new AskFolderWindow(this, this->readHistoryFile());
-    }
 
-    QObject::connect(
-        this->askFolderWindow, SIGNAL(accepted()),
-        this, SLOT(askForGallery_Accepted())
-    );
+        QObject::connect(
+            this->askFolderWindow, SIGNAL(accepted()),
+            this, SLOT(askForGallery_Accepted())
+        );
+    }
 
     this->askFolderWindow->show();
 }
@@ -147,6 +147,8 @@ void GalleryWindow::clearThumbnailPreview()
     {
         this->previewThumbnail = nullptr;
     }
+
+    this->ui->StatusBar->clearMessage();
 }
 
 /**
@@ -323,30 +325,9 @@ void GalleryWindow::renderPreviewForThumbnail(Thumbnail *thumbnail)
         }
     }
 
-    int labelWidth = this->ui->ThumbnailPreview->width(),
-        labelHeight = this->ui->ThumbnailPreview->height();
-
-    QPixmap labelPixmap;
-
-    if (labelWidth < labelHeight)
-    {
-        labelPixmap = QPixmap(this->previewPixmap->scaledToWidth(labelWidth));
-    }
-    else
-    {
-        labelPixmap = QPixmap(this->previewPixmap->scaledToHeight(labelHeight));
-    }
-
-    if (labelPixmap.height() > labelHeight)
-    {
-        labelPixmap = QPixmap(labelPixmap.scaledToHeight(labelHeight));
-    }
-    else if (labelPixmap.width() > labelWidth)
-    {
-        labelPixmap = QPixmap(labelPixmap.scaledToWidth(labelWidth));
-    }
-
-    this->ui->ThumbnailPreview->setPixmap(labelPixmap);
+    this->ui->ThumbnailPreview->setPixmap(
+        this->previewPixmap->scaled(this->ui->ThumbnailPreview->size(), Qt::KeepAspectRatio)
+    );
 }
 
 /**
@@ -406,6 +387,7 @@ void GalleryWindow::actionOpen_Triggered()
 void GalleryWindow::actionClose_Triggered()
 {
     this->resetGallery();
+    this->writeHistoryFile("");
 }
 
 /**
@@ -452,7 +434,7 @@ void GalleryWindow::thumbnail_Clicked()
  *      Spliter or Window or something else change the
  *      layout size
  */
-void GalleryWindow::splitterBody_Moved(int pos, int index)
+void GalleryWindow::splitterBody_Moved([[maybe_unused]] int pos, [[maybe_unused]] int index)
 {
     this->resizeLayout();
 }
