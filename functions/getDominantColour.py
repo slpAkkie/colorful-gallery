@@ -11,7 +11,7 @@ def getDominantColour(pixmap: QPixmap) -> dict:
             pixmap = pixmap.scaledToHeight(res)
 
     image = pixmap.toImage()
-    step = 4
+    step = 2
     width = image.width()
     height = image.height()
     hue_dict = {}

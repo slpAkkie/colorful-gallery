@@ -107,6 +107,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.spacePressing = False if event.key() == 32 else self.spacePressing
         print(self.spacePressing)
 
+    @pyqtSlot(name='on_ToggleFileInfoAction_triggered')
+    def __ToggleFileInfoAction_triggered(self):
+        self.FileInfoGroupBox.setHidden(not self.FileInfoGroupBox.isHidden())
+        self.__show_preview()
+
     @pyqtSlot(name='on_StopSlideshowAction_triggered')
     def __StopSlideshowAction_triggered(self):
         self.__stopSlideshow()
@@ -363,13 +368,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 i.remove(thumbnail)
 
         self.__remove_widget(thumbnail)
-        # self.__clear_thumbnail_area()
+        thumbnail.deleteLater()
+
         self.__render_thumbnails(
             list_name=self.current_list, start_from=deleted_index)
 
     def __remove_widget(self, widget):
         self.ThumbnailAreaLayout.removeWidget(widget)
-        # widget.deleteLater() # This cause to exception that C\C++ wrapped object of type Thu,bnail has been deleted
 
     def __clear_thumbnail_area(self):
         for widget in self.thumbnail_lists['original']:

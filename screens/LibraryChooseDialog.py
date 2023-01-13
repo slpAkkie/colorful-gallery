@@ -27,9 +27,9 @@ class LibraryChooseDialog(QDialog, Ui_LibraryChooseDialog):
         dialog = QtWidgets.QFileDialog(self)
         dialog.setFileMode(QtWidgets.QFileDialog.FileMode.Directory)
         dialog.setOption(QtWidgets.QFileDialog.Option.ShowDirsOnly)
-        dialog.exec()
 
-        self.SelectedPathLineEdit.setText(dialog.selectedFiles()[0])
+        if (dialog.exec()):
+            self.SelectedPathLineEdit.setText(dialog.selectedFiles()[0])
 
     @pyqtSlot(name='on_ApplyButton_clicked')
     def __ApplyButton_clicked(self) -> None:

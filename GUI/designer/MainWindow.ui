@@ -241,6 +241,8 @@
     <addaction name="separator"/>
     <addaction name="SlideshowAction"/>
     <addaction name="StopSlideshowAction"/>
+    <addaction name="separator"/>
+    <addaction name="ToggleFileInfoAction"/>
    </widget>
    <addaction name="FileMenu"/>
    <addaction name="SortMenu"/>
@@ -295,6 +297,11 @@
   <action name="ShuffleAction">
    <property name="text">
     <string>Shuffle</string>
+   </property>
+  </action>
+  <action name="ToggleFileInfoAction">
+   <property name="text">
+    <string>Toggle FileInfo</string>
    </property>
   </action>
  </widget>
