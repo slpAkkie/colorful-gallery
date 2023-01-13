@@ -126,7 +126,7 @@
      <string>menu.file</string>
     </property>
     <addaction name="ActionOpen"/>
-    <addaction name="ActionRefresh"/>
+    <addaction name="ActionReload"/>
     <addaction name="ActionClose"/>
    </widget>
    <widget class="QMenu" name="MenuSort">
@@ -142,8 +142,6 @@
     </property>
     <addaction name="ActionMoreColumns"/>
     <addaction name="ActionLessColumns"/>
-    <addaction name="separator"/>
-    <addaction name="ActionToggleFileInfo"/>
    </widget>
    <addaction name="MenuFile"/>
    <addaction name="MenuSort"/>
@@ -160,7 +158,7 @@
     <string>menu.file.close-folder</string>
    </property>
   </action>
-  <action name="ActionRefresh">
+  <action name="ActionReload">
    <property name="text">
     <string>menu.file.reload</string>
    </property>

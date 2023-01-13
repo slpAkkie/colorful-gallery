@@ -197,8 +197,16 @@ private:
     /**
      * @brief renderThumbnails
      *      renders thumbnail widgets from current list
+     * @param startFrom
      */
-    void renderThumbnails();
+    void renderThumbnails(int startFrom = 0);
+
+    /**
+     * @brief openGallery
+     *      opens gallery for provided path string
+     * @param path
+     */
+    void openGallery(QString inputPath);
 
     /**
      * @brief getThumbnailColumnWidth
@@ -220,6 +228,13 @@ private:
      */
     void resizeLayout();
 
+    /**
+     * @brief removeThumbnail
+     *      removes thumbnail from all lists and screen
+     * @param thumbnail
+     */
+    void removeThumbnail(Thumbnail *thumbnail);
+
 private slots:
     /**
      * @brief askForGallery_Accepted
@@ -232,6 +247,12 @@ private slots:
      *      handle signal when menu action Open is triggered
      */
     void actionOpen_Triggered();
+
+    /**
+     * @brief actionReload_Triggered
+     *      handle signal then menu action Reffresh is triggered
+     */
+    void actionReload_Triggered();
 
     /**
      * @brief actionClose_Triggered

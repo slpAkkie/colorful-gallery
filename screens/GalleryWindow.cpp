@@ -28,6 +28,10 @@ void GalleryWindow::setupSlots()
         this, SLOT(actionOpen_Triggered())
     );
     QObject::connect(
+        this->ui->ActionReload, SIGNAL(triggered()),
+        this, SLOT(actionReload_Triggered())
+    );
+    QObject::connect(
         this->ui->ActionClose, SIGNAL(triggered()),
         this, SLOT(actionClose_Triggered())
     );
@@ -236,6 +240,7 @@ void GalleryWindow::loadGallery()
         QString entryPath = QString::fromStdString(entry.path());
         Thumbnail *thumbnail = new Thumbnail(this, entryPath);
         QObject::connect(thumbnail, SIGNAL(clicked()), this, SLOT(thumbnail_Clicked()));
+        QObject::connect(thumbnail, SIGNAL(deleted()), this, SLOT(thumbnail_Deleted()));
 
         this->addThumbnail(DEFAULT_THUMBNAIL_LIST, thumbnail);
     }
@@ -258,12 +263,12 @@ void GalleryWindow::loadGallery()
  * @brief renderThumbnails
  *      renders thumbnail widgets from current list
  */
-void GalleryWindow::renderThumbnails()
+void GalleryWindow::renderThumbnails(int startFrom)
 {
-    int thumbnailCount = this->Thumbnails->at(DEFAULT_THUMBNAIL_LIST)->size();
-    ThumbnailList *thumbnailList = this->Thumbnails->at(DEFAULT_THUMBNAIL_LIST);
+    int thumbnailCount = this->Thumbnails->at(this->currentList)->size();
+    ThumbnailList *thumbnailList = this->Thumbnails->at(this->currentList);
 
-    for (int i = 0; i < thumbnailCount; i++)
+    for (int i = startFrom; i < thumbnailCount; i++)
     {
         Thumbnail *thumbnail = thumbnailList->at(i);
         thumbnail->resizeToWidth(this->getThumbnailColumnWidth());
@@ -289,6 +294,30 @@ void GalleryWindow::newThumbnailList(QString name)
     }
 
     this->Thumbnails->emplace(name, new ThumbnailList());
+}
+
+/**
+ * @brief openGallery
+ *      opens gallery for provided path string
+ * @param path
+ */
+void GalleryWindow::openGallery(QString inputPath)
+{
+    if (!this->tryOpenGallery(inputPath))
+    {
+        QMessageBox::critical(
+            this,
+            this->tr("message-wrong.gallery-path.title"),
+            this->tr("message-wrong.gallery-path.text")
+        );
+
+        return;
+    }
+
+    this->writeHistoryFile(inputPath);
+    this->resetGallery();
+    this->loadGallery();
+    this->renderThumbnails();
 }
 
 /**
@@ -347,28 +376,37 @@ void GalleryWindow::resizeLayout()
 }
 
 /**
+ * @brief removeThumbnail
+ *      removes thumbnail from all lists and screen
+ * @param thumbnail
+ */
+void GalleryWindow::removeThumbnail(Thumbnail *thumbnail)
+{
+    this->ui->ThumbnailListContainerLayout->removeWidget(thumbnail);
+
+    ThumbnailList *currentList = this->Thumbnails->at(this->currentList);
+
+    int deletedThumbnailIndex = std::find(
+        currentList->begin(), currentList->end(), thumbnail
+    ) - currentList->begin();
+
+    for (const auto & entry: *this->Thumbnails)
+    {
+        ThumbnailList *list = entry.second;
+        list->erase(std::remove(list->begin(), list->end(), thumbnail), list->end());
+    }
+
+    thumbnail->deleteLater();
+    this->renderThumbnails(deletedThumbnailIndex);
+}
+
+/**
  * @brief askForGallery_Accepted
  *      holds signal when askFolderWindow is accepted
  */
 void GalleryWindow::askForGallery_Accepted()
 {
-    QString inputPath = this->askFolderWindow->getPath();
-
-    if (!this->tryOpenGallery(inputPath))
-    {
-        QMessageBox::critical(
-            this,
-            this->tr("message-wrong.gallery-path.title"),
-            this->tr("message-wrong.gallery-path.text")
-        );
-
-        return;
-    }
-
-    this->writeHistoryFile(inputPath);
-    this->resetGallery();
-    this->loadGallery();
-    this->renderThumbnails();
+    this->openGallery(this->askFolderWindow->getPath());
 }
 
 /**
@@ -378,6 +416,15 @@ void GalleryWindow::askForGallery_Accepted()
 void GalleryWindow::actionOpen_Triggered()
 {
     this->askForGalleryPath();
+}
+
+/**
+ * @brief actionReload_Triggered
+ *      handle signal then menu action Reffresh is triggered
+ */
+void GalleryWindow::actionReload_Triggered()
+{
+    this->openGallery(this->galleryPath);
 }
 
 /**
@@ -445,14 +492,16 @@ void GalleryWindow::splitterBody_Moved([[maybe_unused]] int pos, [[maybe_unused]
  */
 void GalleryWindow::thumbnail_Deleted()
 {
-    QObject *deletedThumbnail = this->sender();
+    if (dynamic_cast<Thumbnail*>(this->sender()) == nullptr) return;
 
-    if (dynamic_cast<Thumbnail*>(deletedThumbnail) == nullptr) return;
+    Thumbnail *deletedThumbnail = dynamic_cast<Thumbnail*>(this->sender());
 
     if (this->previewThumbnail == deletedThumbnail)
     {
         this->clearThumbnailPreview();
     }
+
+    this->removeThumbnail(deletedThumbnail);
 }
 
 /**
