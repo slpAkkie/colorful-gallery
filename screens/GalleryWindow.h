@@ -5,6 +5,7 @@
 #define MAX_COLUMN_AMOUNT 8
 #define MIN_COLUMN_AMOUNT 1
 #define DEFAULT_THUMBNAIL_LIST "default"
+#define COLOR_SORTED_THUMBNAIL_LIST "dominantColour"
 #define PATH_SAVE_FILENAME ".last_gallery"
 
 #include <QMainWindow>
@@ -259,6 +260,18 @@ private slots:
      *      handle signal when menu action Close is triggered
      */
     void actionClose_Triggered();
+
+    /**
+     * @brief actionSortByColor_Trigered
+     *      handle signal then menu action Sort By Color triggered
+     */
+    void actionByColor_Trigered();
+
+    /**
+     * @brief actionSortByColor_Trigered
+     *      handle signal then menu action Unsorted triggered
+     */
+    void actionUnsorted_Trigered();
 
     /**
      * @brief actionMoreColumns_Triggered

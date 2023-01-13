@@ -36,6 +36,14 @@ void GalleryWindow::setupSlots()
         this, SLOT(actionClose_Triggered())
     );
     QObject::connect(
+        this->ui->ActionByColor, SIGNAL(triggered()),
+        this, SLOT(actionByColor_Trigered())
+    );
+    QObject::connect(
+        this->ui->ActionUnsorted, SIGNAL(triggered()),
+        this, SLOT(actionUnsorted_Trigered())
+    );
+    QObject::connect(
         this->ui->ActionMoreColumns, SIGNAL(triggered()),
         this, SLOT(actionMoreColumns_Triggered())
     );
@@ -131,6 +139,7 @@ void GalleryWindow::resetGallery()
     this->clearThumbnails();
 
     this->setWindowTitle(tr("window.title"));
+    this->currentList = DEFAULT_THUMBNAIL_LIST;
 }
 
 /**
@@ -172,7 +181,7 @@ void GalleryWindow::clearThumbnails()
     }
 
     this->newThumbnailList(DEFAULT_THUMBNAIL_LIST);
-    this->newThumbnailList("dominantColour");
+    this->newThumbnailList(COLOR_SORTED_THUMBNAIL_LIST);
 }
 
 /**
@@ -348,7 +357,7 @@ void GalleryWindow::renderPreviewForThumbnail(Thumbnail *thumbnail)
             this->previewThumbnail = thumbnail;
             this->previewPixmap = new QPixmap(this->previewThumbnail->getImagePath());
 
-            QString statusBarMessage = QFileInfo(this->previewThumbnail->getImagePath()).fileName() + "    [" + this->previewThumbnail->getResolution() + "]";
+            QString statusBarMessage = QFileInfo(this->previewThumbnail->getImagePath()).fileName() + "    [" + this->previewThumbnail->getResolution() + "]" + "    [" + this->previewThumbnail->getColorCode(false) + "]";
 
             this->ui->StatusBar->showMessage(statusBarMessage);
         }
@@ -435,6 +444,47 @@ void GalleryWindow::actionClose_Triggered()
 {
     this->resetGallery();
     this->writeHistoryFile("");
+}
+
+/**
+ * @brief actionSortByColor_Trigered
+ *      handle signal then menu action Sort By Color triggered
+ */
+void GalleryWindow::actionByColor_Trigered()
+{
+    ThumbnailList *defaultList = this->Thumbnails->at(this->currentList);
+    ThumbnailList *colorSortedList = this->Thumbnails->at(COLOR_SORTED_THUMBNAIL_LIST);
+
+    if (colorSortedList->empty())
+    {
+        QProgressBar *progressBar = this->createProgressBar(defaultList->size());
+
+        colorSortedList->assign(defaultList->begin(), defaultList->end());
+
+        std::sort(
+            colorSortedList->begin(),
+            colorSortedList->end(),
+            [progressBar](Thumbnail *a, Thumbnail *b) {
+                progressBar->setValue(progressBar->value() + 1);
+
+                return a->getColorCode() < b->getColorCode();
+            }
+        );
+    }
+
+    this->deleteProgressBar();
+    this->currentList = COLOR_SORTED_THUMBNAIL_LIST;
+    this->renderThumbnails();
+}
+
+/**
+ * @brief actionSortByColor_Trigered
+ *      handle signal then menu action Unsorted triggered
+ */
+void GalleryWindow::actionUnsorted_Trigered()
+{
+    this->currentList = DEFAULT_THUMBNAIL_LIST;
+    this->renderThumbnails();
 }
 
 /**

@@ -11,6 +11,44 @@
 #define Thumbnail_H
 
 #define MAX_SIDE_SIZE 480
+#define SIZE_FOR_COLOR_CODE_DETERMINE 128
+#define EMPTY_COLOR_CODE_VALUE ""
+// -----
+#define COLOR_STEP 2
+#define MIN_SATURATION 5
+#define MIN_LIGHTNESS 5
+// -----
+#define COLOR_CODE_LEADING_SYMB "0"
+#define COLOR_CODE_PART_LEN 3
+// -----
+#define INC_VALUE(m, v) \
+    { \
+        int _ = v & COLOR_STEP; \
+        v -= _; \
+        if (_ > COLOR_STEP / 2) \
+            v += COLOR_STEP; \
+        \
+        if (v >= 0) { \
+            if (m->contains(v)) \
+                m->at(v) += 1; \
+            else \
+                m->emplace(v, 1); \
+        }\
+    }
+
+#define BETWEEN(min, val, max) \
+    ((min <= val) && (val <= max))
+
+#define MAP_KEY_W_MAX_VAL(m) \
+    std::max_element(m->begin(), m->end(), \
+        [](const auto & p1, const auto & p2) { \
+            return p1.second < p2.second; \
+        } \
+    )->first
+
+#define LEADING_SYMB(str) \
+    if (COLOR_CODE_PART_LEN - str.length() > 0) \
+        str = QString(COLOR_CODE_LEADING_SYMB).repeated(COLOR_CODE_PART_LEN - str.length()) + str \
 
 using namespace std;
 
@@ -39,6 +77,13 @@ public:
     QSize *srcSize = nullptr;
 
     /**
+     * @brief colorString
+     *      string representing the characteristics
+     *      of the colors in the image as a whole
+     */
+    QString colorCode = EMPTY_COLOR_CODE_VALUE;
+
+    /**
      * @brief load
      *      loads image into pixmap
      */
@@ -63,6 +108,21 @@ public:
      * @return
      */
     QString getResolution();
+
+    /**
+     * @brief determineColorCode
+     *      Proceed the image and determine the color code
+     */
+    void determineColorCode();
+
+    /**
+     * @brief getColorCode
+     *      returns a string representing the characteristics
+     *      of the colors in the image as a whole
+     * @param load
+     * @return
+     */
+    QString getColorCode(bool load = true);
 
     /**
      * @brief deleteSourceFile

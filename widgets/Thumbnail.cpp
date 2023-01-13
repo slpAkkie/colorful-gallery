@@ -1,3 +1,4 @@
+#include <QImage>
 #include <QFile>
 
 #include "Thumbnail.h"
@@ -116,6 +117,74 @@ QString Thumbnail::getImagePath()
 QString Thumbnail::getResolution()
 {
     return QString::fromStdString(to_string(this->srcSize->width()) + "x" + to_string(this->srcSize->height()));
+}
+
+/**
+ * @brief determineColorCode
+ *      Proceed the image and determine the color code
+ */
+void Thumbnail::determineColorCode()
+{
+    QImage *image = new QImage(QImage(this->imagePath).scaled(
+        QSize(SIZE_FOR_COLOR_CODE_DETERMINE, SIZE_FOR_COLOR_CODE_DETERMINE),
+        Qt::KeepAspectRatio
+   ));
+
+    int width = image->width(), height = image->height();
+    map<int, int>
+            *h = new map<int, int>(),
+            *s = new map<int, int>(),
+            *l = new map<int, int>();
+
+    for (int x = 0; x < width; x++)
+    {
+        for (int y = 0; y < height; y++)
+        {
+            QColor pixel = image->pixelColor(x, y);
+            int hue, saturation, lightness;
+            pixel.getHsl(&hue, &saturation, &lightness);
+
+            if (saturation < MIN_SATURATION || lightness < MIN_LIGHTNESS || lightness / 2.2 > saturation)
+                continue;
+
+            INC_VALUE(h, hue);
+            INC_VALUE(s, saturation);
+            INC_VALUE(l, lightness);
+        }
+    }
+
+    delete image;
+
+    QString
+        _h = QString::number(MAP_KEY_W_MAX_VAL(h)),
+        _s = QString::number(MAP_KEY_W_MAX_VAL(s)),
+        _l = QString::number(MAP_KEY_W_MAX_VAL(l));
+
+    delete h;
+    delete s;
+    delete l;
+
+    LEADING_SYMB(_h);
+    LEADING_SYMB(_s);
+    LEADING_SYMB(_l);
+
+    this->colorCode = _h + _s + _l;
+}
+
+/**
+ * @brief getColorStringForSort
+ *      returns a string representing the characteristics
+ *      of the colors in the image as a whole
+ * @return
+ */
+QString Thumbnail::getColorCode(bool load)
+{
+    if (this->colorCode == EMPTY_COLOR_CODE_VALUE && load)
+    {
+        this->determineColorCode();
+    }
+
+    return this->colorCode;
 }
 
 /**
