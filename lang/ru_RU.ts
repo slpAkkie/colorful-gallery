@@ -30,7 +30,7 @@
         <location filename="../layouts/GalleryWindow.ui" line="20"/>
         <location filename="../screens/GalleryWindow.cpp" line="133"/>
         <source>window.title</source>
-        <translation>Sortable Gallery</translation>
+        <translation>Colorful Gallery</translation>
     </message>
     <message>
         <location filename="../layouts/GalleryWindow.ui" line="126"/>

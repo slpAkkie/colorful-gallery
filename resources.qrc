@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>icons/sortable-gallery.png</file>
+        <file>icons/colorful-gallery.png</file>
         <file>themes/dark.qss</file>
         <file>themes/dark-icons/branch_closed.svg</file>
         <file>themes/dark-icons/branch_closed_hover.svg</file>

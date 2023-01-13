@@ -21,7 +21,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../resources.qrc">
-    <normaloff>:/icons/sortable-gallery.png</normaloff>:/icons/sortable-gallery.png</iconset>
+    <normaloff>:/icons/colorful-gallery.png</normaloff>:/icons/colorful-gallery.png</iconset>
   </property>
   <property name="unifiedTitleAndToolBarOnMac">
    <bool>true</bool>
@@ -147,7 +147,11 @@
    <addaction name="MenuSort"/>
    <addaction name="MenuView"/>
   </widget>
-  <widget class="QStatusBar" name="StatusBar"/>
+  <widget class="QStatusBar" name="StatusBar">
+   <property name="sizeGripEnabled">
+    <bool>false</bool>
+   </property>
+  </widget>
   <action name="ActionOpen">
    <property name="text">
     <string>menu.file.open</string>

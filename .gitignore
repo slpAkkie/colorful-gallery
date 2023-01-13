@@ -84,4 +84,4 @@ venv/
 build/
 
 # Additional app files
-.last_opened_gallery
+.last_gallery

@@ -17,7 +17,7 @@ mkdir -p build/Debug
 cd build/Debug
 
 make clean
-qmake6 ../../sortable-gallery.pro -spec linux-g++ CONFIG+=debug CONFIG+=qml_debug
+qmake6 ../../colorful-gallery.pro -spec linux-g++ CONFIG+=debug CONFIG+=qml_debug
 make qmake_all
 make
 ```
@@ -28,7 +28,7 @@ make
 mkdir -p build/Release
 cd build/Release
 
-qmake6 ../../sortable-gallery.pro -spec linux-g++ CONFIG+=qtquickcompiler
+qmake6 ../../colorful-gallery.pro -spec linux-g++ CONFIG+=qtquickcompiler
 make qmake_all
 make
 ```
@@ -40,4 +40,3 @@ make
 ## Author
 
 Alexandr Shamanin (@slpAkkie). `Idea - Denyaev Vladislav (@WhiteFox123c)`
-
