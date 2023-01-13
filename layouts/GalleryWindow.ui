@@ -84,7 +84,7 @@
    </widget>
    <widget class="QWidget" name="ThumbnailView" native="true">
     <property name="sizePolicy">
-     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
       <horstretch>1</horstretch>
       <verstretch>0</verstretch>
      </sizepolicy>
@@ -101,67 +101,12 @@
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>1</horstretch>
-         <verstretch>2</verstretch>
+         <verstretch>0</verstretch>
         </sizepolicy>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QGroupBox" name="ThumbnailDetails">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>1</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>150</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>150</height>
-        </size>
-       </property>
-       <property name="title">
-        <string>group-box.fileinfo</string>
-       </property>
-       <layout class="QFormLayout" name="ThumbnailDetailsLayout">
-        <item row="0" column="0">
-         <widget class="QLabel" name="LabelThumbnailFilenameTitle">
-          <property name="text">
-           <string>label.filename</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="LabelThumbnailFilenameValue">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="LabelThumbnailResolutionTitle">
-          <property name="text">
-           <string>label.resolution</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLabel" name="LabelThumbnailResolutionValue">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-       </layout>
       </widget>
      </item>
     </layout>

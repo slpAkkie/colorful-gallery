@@ -109,6 +109,16 @@ QString Thumbnail::getImagePath()
 }
 
 /**
+ * @brief getSrcSizeAsString
+ *      returns source file resolution
+ * @return
+ */
+QString Thumbnail::getResolution()
+{
+    return QString::fromStdString(to_string(this->srcSize->width()) + "x" + to_string(this->srcSize->height()));
+}
+
+/**
  * @brief deleteSourceFile
  *      deletes source file from disk
  */

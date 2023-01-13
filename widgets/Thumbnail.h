@@ -58,6 +58,13 @@ public:
     QString getImagePath();
 
     /**
+     * @brief getSrcSizeAsString
+     *      returns source file resolution
+     * @return
+     */
+    QString getResolution();
+
+    /**
      * @brief deleteSourceFile
      *      deletes source file from disk
      */

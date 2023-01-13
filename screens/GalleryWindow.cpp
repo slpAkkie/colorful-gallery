@@ -1,7 +1,6 @@
 #include <filesystem>
 
-#include <QDebug>
-#include <QString>
+#include <QFileInfo>
 #include <QMessageBox>
 
 #include "ui_GalleryWindow.h"
@@ -312,15 +311,17 @@ void GalleryWindow::renderPreviewForThumbnail(Thumbnail *thumbnail)
 
     if (thumbnail != nullptr)
     {
-        this->clearThumbnailPreview();
+        if (thumbnail != this->previewThumbnail)
+        {
+            this->clearThumbnailPreview();
+            this->previewThumbnail = thumbnail;
+            this->previewPixmap = new QPixmap(this->previewThumbnail->getImagePath());
 
-        this->previewThumbnail = thumbnail;
-        this->previewPixmap = new QPixmap(thumbnail->getImagePath());
+            QString statusBarMessage = QFileInfo(this->previewThumbnail->getImagePath()).fileName() + "    [" + this->previewThumbnail->getResolution() + "]";
+
+            this->ui->StatusBar->showMessage(statusBarMessage);
+        }
     }
-
-
-    int sourceWidth = this->previewPixmap->width(),
-        sourceHeight = this->previewPixmap->height();
 
     int labelWidth = this->ui->ThumbnailPreview->width(),
         labelHeight = this->ui->ThumbnailPreview->height();
@@ -346,10 +347,6 @@ void GalleryWindow::renderPreviewForThumbnail(Thumbnail *thumbnail)
     }
 
     this->ui->ThumbnailPreview->setPixmap(labelPixmap);
-    this->ui->LabelThumbnailFilenameValue->setText(this->previewThumbnail->getImagePath());
-    this->ui->LabelThumbnailResolutionValue->setText(
-        QString::fromStdString(to_string(sourceHeight) + ":" + to_string(sourceWidth))
-    );
 }
 
 /**
