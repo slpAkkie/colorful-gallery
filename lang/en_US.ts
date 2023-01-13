@@ -14,12 +14,12 @@
         <translation>Browse</translation>
     </message>
     <message>
-        <location filename="../layouts/AskFolderWindow.ui" line="45"/>
+        <location filename="../layouts/AskFolderWindow.ui" line="48"/>
         <source>btn.apply</source>
         <translation>Apply</translation>
     </message>
     <message>
-        <location filename="../screens/AskFolderWindow.cpp" line="31"/>
+        <location filename="../screens/AskFolderWindow.cpp" line="32"/>
         <source>title.select-folder</source>
         <translation>Select folder for the gallery</translation>
     </message>
@@ -28,78 +28,97 @@
     <name>GalleryWindow</name>
     <message>
         <location filename="../layouts/GalleryWindow.ui" line="20"/>
+        <location filename="../screens/GalleryWindow.cpp" line="130"/>
         <source>window.title</source>
         <translation>Sortable Gallery</translation>
     </message>
     <message>
-        <location filename="../layouts/GalleryWindow.ui" line="139"/>
+        <location filename="../layouts/GalleryWindow.ui" line="133"/>
         <source>group-box.fileinfo</source>
         <translation>File Info</translation>
     </message>
     <message>
-        <location filename="../layouts/GalleryWindow.ui" line="145"/>
+        <location filename="../layouts/GalleryWindow.ui" line="139"/>
         <source>label.filename</source>
         <translation>Filename</translation>
     </message>
     <message>
-        <location filename="../layouts/GalleryWindow.ui" line="159"/>
+        <location filename="../layouts/GalleryWindow.ui" line="153"/>
         <source>label.resolution</source>
         <translation>Resolution</translation>
     </message>
     <message>
-        <location filename="../layouts/GalleryWindow.ui" line="187"/>
+        <location filename="../layouts/GalleryWindow.ui" line="181"/>
         <source>menu.file</source>
         <translation>File</translation>
     </message>
     <message>
-        <location filename="../layouts/GalleryWindow.ui" line="195"/>
+        <location filename="../layouts/GalleryWindow.ui" line="189"/>
         <source>menu.sort</source>
         <translation>Sort</translation>
     </message>
     <message>
-        <location filename="../layouts/GalleryWindow.ui" line="202"/>
+        <location filename="../layouts/GalleryWindow.ui" line="196"/>
         <source>menu.view</source>
         <translation>View</translation>
     </message>
     <message>
-        <location filename="../layouts/GalleryWindow.ui" line="213"/>
+        <location filename="../layouts/GalleryWindow.ui" line="210"/>
         <source>menu.file.open</source>
         <translation>Open</translation>
     </message>
     <message>
-        <location filename="../layouts/GalleryWindow.ui" line="218"/>
+        <location filename="../layouts/GalleryWindow.ui" line="215"/>
         <source>menu.file.close-folder</source>
         <translation>Close Folder</translation>
     </message>
     <message>
-        <location filename="../layouts/GalleryWindow.ui" line="223"/>
+        <location filename="../layouts/GalleryWindow.ui" line="220"/>
         <source>menu.file.reload</source>
         <translation>Reload</translation>
     </message>
     <message>
-        <location filename="../layouts/GalleryWindow.ui" line="228"/>
+        <location filename="../layouts/GalleryWindow.ui" line="225"/>
         <source>action.sort.by-color</source>
         <translation>By color (HUE)</translation>
     </message>
     <message>
-        <location filename="../layouts/GalleryWindow.ui" line="233"/>
+        <location filename="../layouts/GalleryWindow.ui" line="230"/>
         <source>action.sort.unsorted</source>
         <translation>Default (Unsorted)</translation>
     </message>
     <message>
-        <location filename="../layouts/GalleryWindow.ui" line="238"/>
+        <location filename="../layouts/GalleryWindow.ui" line="235"/>
         <source>action.view.toggle-fileinfo</source>
         <translation>Toggle File Info</translation>
     </message>
     <message>
-        <location filename="../screens/GalleryWindow.cpp" line="77"/>
+        <location filename="../layouts/GalleryWindow.ui" line="240"/>
+        <source>action.view.more-columns</source>
+        <translation>More columns</translation>
+    </message>
+    <message>
+        <location filename="../layouts/GalleryWindow.ui" line="245"/>
+        <source>action.view.less-columns</source>
+        <translation>Less columns</translation>
+    </message>
+    <message>
+        <location filename="../screens/GalleryWindow.cpp" line="383"/>
         <source>message-wrong.gallery-path.title</source>
         <translation>Error in gallery path</translation>
     </message>
     <message>
-        <location filename="../screens/GalleryWindow.cpp" line="77"/>
+        <location filename="../screens/GalleryWindow.cpp" line="384"/>
         <source>message-wrong.gallery-path.text</source>
         <translation>The directory you specified does not seem to exist</translation>
+    </message>
+</context>
+<context>
+    <name>Thumbnail</name>
+    <message>
+        <location filename="../widgets/Thumbnail.cpp" line="28"/>
+        <source>menu-action.delete</source>
+        <translation>Delete</translation>
     </message>
 </context>
 </TS>
