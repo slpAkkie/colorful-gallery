@@ -48,6 +48,41 @@ void GalleryWindow::setupSlots()
 }
 
 /**
+ * @brief readHistoryFile
+ *      returns first line from history file
+ * @return
+ */
+QString GalleryWindow::readHistoryFile()
+{
+    QFile historyFile(PATH_SAVE_FILENAME);
+    QString lastGalleryPath = "";
+
+    if (historyFile.open(QIODevice::ReadOnly))
+    {
+        lastGalleryPath = historyFile.readLine();
+        historyFile.close();
+    }
+
+    return lastGalleryPath;
+}
+
+/**
+ * @brief writeHistoryFile
+ *      writes string into the history file
+ * @param str
+ */
+void GalleryWindow::writeHistoryFile(QString str)
+{
+    QFile historyFile(PATH_SAVE_FILENAME);
+
+    if (historyFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        historyFile.write(str.toUtf8());
+        historyFile.close();
+    }
+}
+
+/**
  * @brief askForGalleryPath
  *      asks user to enter path for which gallery will be opened
  */
@@ -55,7 +90,7 @@ void GalleryWindow::askForGalleryPath()
 {
     if (this->askFolderWindow == nullptr)
     {
-        this->askFolderWindow = new AskFolderWindow(this);
+        this->askFolderWindow = new AskFolderWindow(this, this->readHistoryFile());
     }
 
     QObject::connect(
@@ -73,12 +108,12 @@ void GalleryWindow::askForGalleryPath()
  *      path to the folder for which gallery will be opened
  * @return true or false according to successfuly opened provided path
  */
-bool GalleryWindow::tryOpenGallery(string galleryPath)
+bool GalleryWindow::tryOpenGallery(QString galleryPath)
 {
-    if (!filesystem::exists(galleryPath)) return false;
+    if (!filesystem::exists(galleryPath.toStdString())) return false;
 
     this->galleryPath = galleryPath;
-    this->setWindowTitle(QString().fromStdString(this->galleryPath));
+    this->setWindowTitle(this->galleryPath);
 
     return true;
 }
@@ -101,12 +136,18 @@ void GalleryWindow::resetGallery()
  */
 void GalleryWindow::clearThumbnailPreview()
 {
-    if (this->previewPixmap == nullptr) return;
+    if (this->previewPixmap != nullptr)
+    {
+        delete this->previewPixmap;
+        this->previewPixmap = nullptr;
 
-    delete this->previewPixmap;
-    this->previewPixmap = nullptr;
+        this->ui->ThumbnailPreview->clear();
+    }
 
-    this->ui->ThumbnailPreview->clear();
+    if (this->previewThumbnail != nullptr)
+    {
+        this->previewThumbnail = nullptr;
+    }
 }
 
 /**
@@ -135,7 +176,7 @@ void GalleryWindow::clearThumbnails()
  * @param list_name
  * @param thumbnail
  */
-void GalleryWindow::addThumbnail(string list_name, Thumbnail *thumbnail)
+void GalleryWindow::addThumbnail(QString list_name, Thumbnail *thumbnail)
 {
     if (!this->Thumbnails->contains(list_name))
     {
@@ -187,12 +228,12 @@ void GalleryWindow::loadGallery()
     this->clearThumbnails();
 
     // Create all the Thumbnails with the paths
-    for (filesystem::directory_entry const &entry : filesystem::directory_iterator(this->galleryPath))
+    for (filesystem::directory_entry const &entry : filesystem::directory_iterator(this->galleryPath.toStdString()))
     {
         if (filesystem::is_directory(entry)) continue;
 
-        string entryPath = entry.path().c_str();
-        Thumbnail *thumbnail = new Thumbnail (this, entryPath);
+        QString entryPath = QString::fromStdString(entry.path());
+        Thumbnail *thumbnail = new Thumbnail(this, entryPath);
         QObject::connect(thumbnail, SIGNAL(clicked()), this, SLOT(thumbnail_Clicked()));
 
         this->addThumbnail(DEFAULT_THUMBNAIL_LIST, thumbnail);
@@ -239,7 +280,7 @@ void GalleryWindow::renderThumbnails()
  * @param name
  *      name for new list
  */
-void GalleryWindow::newThumbnailList(string name)
+void GalleryWindow::newThumbnailList(QString name)
 {
     if (this->Thumbnails == nullptr)
     {
@@ -267,41 +308,48 @@ int GalleryWindow::getThumbnailColumnWidth()
  */
 void GalleryWindow::renderPreviewForThumbnail(Thumbnail *thumbnail)
 {
-    if (thumbnail == nullptr && this->previewPixmap == nullptr) return;
+    if (thumbnail == nullptr && this->previewThumbnail == nullptr) return;
 
     if (thumbnail != nullptr)
     {
         this->clearThumbnailPreview();
 
-        this->previewPixmap = new QPixmap(QString::fromStdString(thumbnail->getImagePath()));
+        this->previewThumbnail = thumbnail;
+        this->previewPixmap = new QPixmap(thumbnail->getImagePath());
     }
 
-    int labelWidth = this->ui->ThumbnailPreview->width();
-    int labelHeight = this->ui->ThumbnailPreview->height();
 
-    QPixmap *labelPixmap;
+    int sourceWidth = this->previewPixmap->width(),
+        sourceHeight = this->previewPixmap->height();
+
+    int labelWidth = this->ui->ThumbnailPreview->width(),
+        labelHeight = this->ui->ThumbnailPreview->height();
+
+    QPixmap labelPixmap;
 
     if (labelWidth < labelHeight)
     {
-        labelPixmap = new QPixmap(this->previewPixmap->scaledToWidth(labelWidth));
+        labelPixmap = QPixmap(this->previewPixmap->scaledToWidth(labelWidth));
     }
     else
     {
-        labelPixmap = new QPixmap(this->previewPixmap->scaledToHeight(labelHeight));
+        labelPixmap = QPixmap(this->previewPixmap->scaledToHeight(labelHeight));
     }
 
-    if (labelPixmap->height() > labelHeight)
+    if (labelPixmap.height() > labelHeight)
     {
-        *labelPixmap = QPixmap(labelPixmap->scaledToHeight(labelHeight));
+        labelPixmap = QPixmap(labelPixmap.scaledToHeight(labelHeight));
     }
-    else if (labelPixmap->width() > labelWidth)
+    else if (labelPixmap.width() > labelWidth)
     {
-        *labelPixmap = QPixmap(labelPixmap->scaledToWidth(labelWidth));
+        labelPixmap = QPixmap(labelPixmap.scaledToWidth(labelWidth));
     }
 
-    this->ui->ThumbnailPreview->setPixmap(*labelPixmap);
-
-    delete labelPixmap;
+    this->ui->ThumbnailPreview->setPixmap(labelPixmap);
+    this->ui->LabelThumbnailFilenameValue->setText(this->previewThumbnail->getImagePath());
+    this->ui->LabelThumbnailResolutionValue->setText(
+        QString::fromStdString(to_string(sourceHeight) + ":" + to_string(sourceWidth))
+    );
 }
 
 /**
@@ -326,7 +374,7 @@ void GalleryWindow::resizeLayout()
  */
 void GalleryWindow::askForGallery_Accepted()
 {
-    string inputPath = this->askFolderWindow->getPath();
+    QString inputPath = this->askFolderWindow->getPath();
 
     if (!this->tryOpenGallery(inputPath))
     {
@@ -339,6 +387,7 @@ void GalleryWindow::askForGallery_Accepted()
         return;
     }
 
+    this->writeHistoryFile(inputPath);
     this->resetGallery();
     this->loadGallery();
     this->renderThumbnails();
@@ -397,7 +446,6 @@ void GalleryWindow::thumbnail_Clicked()
     Thumbnail *thumbnail = dynamic_cast<Thumbnail*>(this->sender());
     if (thumbnail == nullptr) return;
 
-    this->previewThumbnail = thumbnail;
     this->renderPreviewForThumbnail(thumbnail);
 }
 
@@ -410,6 +458,22 @@ void GalleryWindow::thumbnail_Clicked()
 void GalleryWindow::splitterBody_Moved(int pos, int index)
 {
     this->resizeLayout();
+}
+
+/**
+ * @brief thumbnail_Deleted
+ *      handle signal when user deleted a thumbnail
+ */
+void GalleryWindow::thumbnail_Deleted()
+{
+    QObject *deletedThumbnail = this->sender();
+
+    if (dynamic_cast<Thumbnail*>(deletedThumbnail) == nullptr) return;
+
+    if (this->previewThumbnail == deletedThumbnail)
+    {
+        this->clearThumbnailPreview();
+    }
 }
 
 /**

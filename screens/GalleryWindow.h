@@ -5,9 +5,12 @@
 #define MAX_COLUMN_AMOUNT 8
 #define MIN_COLUMN_AMOUNT 1
 #define DEFAULT_THUMBNAIL_LIST "default"
+#define PATH_SAVE_FILENAME ".last_gallery"
 
 #include <QMainWindow>
 #include <QProgressBar>
+#include <QString>
+#include <QFile>
 
 #include "widgets/Thumbnail.h"
 #include "screens/AskFolderWindow.h"
@@ -20,7 +23,7 @@ namespace Ui { class GalleryWindow; }
 QT_END_NAMESPACE
 
 typedef vector<Thumbnail*> ThumbnailList;
-typedef map<string, ThumbnailList*> ThumbnailsContainer;
+typedef map<QString, ThumbnailList*> ThumbnailsContainer;
 
 class GalleryWindow : public QMainWindow
 {
@@ -70,7 +73,7 @@ private:
      * @brief galleryPath
      *      path to the gallery specified by the user
      */
-    string galleryPath;
+    QString galleryPath;
 
     /**
      * @brief Thumbnails
@@ -82,7 +85,7 @@ private:
      * @brief currentList
      *      list of thumbnails that now displayed
      */
-    string currentList = DEFAULT_THUMBNAIL_LIST;
+    QString currentList = DEFAULT_THUMBNAIL_LIST;
 
     /**
      * @brief columnAmount
@@ -98,7 +101,7 @@ private:
 
     /**
      * @brief previewThumbnail
-     *  Thumbnail that currently using for preview
+     *      Thumbnail that currently using for preview
      */
     Thumbnail *previewThumbnail = nullptr;
 
@@ -107,6 +110,20 @@ private:
      *      connects the slots to window's widgets and signals
      */
     void setupSlots();
+
+    /**
+     * @brief readHistoryFile
+     *      returns first line from history file or empty string
+     * @return
+     */
+    QString readHistoryFile();
+
+    /**
+     * @brief writeHistoryFile
+     *      writes string into the history file
+     * @param str
+     */
+    void writeHistoryFile(QString str);
 
     /**
      * @brief askForGalleryPath
@@ -121,7 +138,7 @@ private:
      *      path to the folder for which gallery will be opened
      * @return true or false according to successfuly opened provided path
      */
-    bool tryOpenGallery(string galleryPath);
+    bool tryOpenGallery(QString galleryPath);
 
     /**
      * @brief resetGallery
@@ -147,7 +164,7 @@ private:
      * @param name
      *      name for new list
      */
-    void newThumbnailList(string name);
+    void newThumbnailList(QString name);
 
     /**
      * @brief addThumbnail
@@ -155,7 +172,7 @@ private:
      * @param list_name
      * @param thumbnail
      */
-    void addThumbnail(string list_name, Thumbnail *thumbnail);
+    void addThumbnail(QString list_name, Thumbnail *thumbnail);
 
     /**
      * @brief createProgressBar
@@ -247,6 +264,12 @@ private slots:
      * @param index
      */
     void splitterBody_Moved(int pos, int index);
+
+    /**
+     * @brief thumbnail_Deleted
+     *      handle signal when user deleted a thumbnail
+     */
+    void thumbnail_Deleted();
 };
 
 #endif // GALLERYWINDOW_H

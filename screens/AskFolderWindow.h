@@ -2,6 +2,7 @@
 #define ASKFOLDERWINDOW_H
 
 #include <QDialog>
+#include <QString>
 #include <QLineEdit>
 
 using namespace std;
@@ -22,7 +23,7 @@ public:
      * @param parent
      *      parent widget for this one
      */
-    explicit AskFolderWindow(QWidget *parent = nullptr);
+    explicit AskFolderWindow(QWidget *parent = nullptr, QString initialPath = "");
 
     /**
      * @brief Destructor of the Window
@@ -34,7 +35,7 @@ public:
      *      get path that was input be the user
      * @return path from the input widget
      */
-    string getPath();
+    QString getPath();
 
 private:
     /**

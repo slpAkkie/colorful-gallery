@@ -9,9 +9,9 @@
  *      get path that was input be the user
  * @return path from the input widget
  */
-string AskFolderWindow::getPath()
+QString AskFolderWindow::getPath()
 {
-    return ui->InputPath->text().toStdString();
+    return ui->InputPath->text();
 }
 
 /**
@@ -54,20 +54,22 @@ void AskFolderWindow::buttonBrowse_clicked()
  * @param parent
  *      parent widget for this one
  */
-AskFolderWindow::AskFolderWindow(QWidget *parent)
+AskFolderWindow::AskFolderWindow(QWidget *parent, QString initialPath)
     // Inherit Frameless window and UI that was compiled from .ui file constructors
     : QDialog(parent), ui(new Ui::AskFolderWindow)
 {
     // Setup UI from compiled .ui file
     this->ui->setupUi(this);
+    this->ui->InputPath->setText(initialPath);
 
-    QPoint dialogCenter = mapToGlobal(rect().center());
-    QPoint parentWindowCenter = parent->window()->mapToGlobal(
-                parent->window()->rect().center()
-    );
-    move(parentWindowCenter - dialogCenter);
+//    QPoint dialogCenter = mapToGlobal(rect().center());
+//    QPoint parentWindowCenter = parent->window()->mapToGlobal(
+//                parent->window()->rect().center()
+//    );
+//    move(parentWindowCenter - dialogCenter);
 
     this->setupSlots();
+
 }
 
 /**

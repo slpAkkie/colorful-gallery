@@ -1,11 +1,16 @@
+#include <vector>
+
+#include <QToolButton>
+#include <QPixmap>
+#include <QString>
+#include <QPoint>
+#include <QSize>
+#include <QMenu>
+
 #ifndef Thumbnail_H
 #define Thumbnail_H
 
 #define MAX_SIDE_SIZE 480
-
-#include <QToolButton>
-#include <QPixmap>
-#include <QSize>
 
 using namespace std;
 
@@ -20,7 +25,7 @@ public:
      * @param parent
      *      parent widget for this one
      */
-    explicit Thumbnail(QWidget *parent = nullptr, string path = nullptr);
+    explicit Thumbnail(QWidget *parent = nullptr, QString path = nullptr);
 
     /**
      * Destructor of the widget
@@ -50,14 +55,67 @@ public:
      *      returns source image path
      * @return
      */
-    string getImagePath();
+    QString getImagePath();
+
+    /**
+     * @brief deleteSourceFile
+     *      deletes source file from disk
+     */
+    void deleteSourceFile();
 
 private:
     /**
      * @brief image_path
      *      path to the image
      */
-    string imagePath;
+    QString imagePath;
+
+    /**
+     * @brief customContextMenu
+     *      Thumbnail's custom context menu
+     */
+    QMenu *customContextMenu = nullptr;
+
+    /**
+     * @brief customContextMenuActions
+     *      Thumbnail's custom context menu actions
+     */
+    vector<QAction*> customContextMenuActions;
+
+    /**
+     * @brief setupSlots
+     *      connects the slots to window's widgets and signals
+     */
+    void setupSlots();
+
+    /**
+     * @brief createCustomContextMenu
+     *      define and configure the context menu
+     */
+    void createCustomContextMenu();
+
+    /**
+     * @brief deleteCustomContextMenu
+     *      delete the context menu
+     */
+    void deleteCustomContextMenu();
+
+signals:
+    void deleted();
+
+private slots:
+    /**
+     * @brief customContextMenu_Requested
+     *      handle signal when context menu requested
+     * @param point
+     */
+    void customContextMenu_Requested(QPoint point);
+
+    /**
+     * @brief deleteAction_Triggered
+     *      handle when delete action is triggered
+     */
+    void deleteAction_Triggered();
 };
 
 #endif // Thumbnail_H
