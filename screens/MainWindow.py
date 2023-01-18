@@ -105,7 +105,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if event.isAutoRepeat():
             return
         self.spacePressing = False if event.key() == 32 else self.spacePressing
-        print(self.spacePressing)
 
     @pyqtSlot(name='on_ToggleFileInfoAction_triggered')
     def __ToggleFileInfoAction_triggered(self):
