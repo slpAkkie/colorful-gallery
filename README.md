@@ -1,30 +1,36 @@
 # Viewer
 
-Very simple image viewer with additional features.
+Компактный обозреватель фотографий с возможностью сортировки по цветовым характеристикам
 
-## Getting started
+## Начало работы
 
-Run next commands to create virtual environment and install dependencies:
+Запустите скрипт установки, чтобы создать виртуальное окружение и усвтановить зависимости
 
 ```sh
 # Windows
-Scripts\install.bat
+.\Scripts\install.bat
 
 # Linux
 chmod +x ./Script/install.sh
 ./Script/install.sh
 ```
 
-## Compile .ui files
+## Компиляция .ui файлов
 
-You can use `Scripts\ui2py.bat` on Windows or `./Scripts/ui2py.sh` on Linux.
+Для быстрой компиляции можете использовать скрипты `ui2py.bat` на Windows или `ui2py.sh` на Linux. Аргументом нужно передать название `ui` файла без расширения
 
-Or use `pyuic6` from `pyqt6` package manually.
+> Например: `./Scripts/ui2py.sh MainWindow`
 
-## Version
+Или использовать `puic6` из комплекта `pyqt6`
+
+## Версия
 
 1.x-dev
 
-## Author
+## Автор
 
-Denyaev Vladislav (@WhiteFox123c). `improvements - Alexandr Shamanin (@slpAkkie)`
+Denyaev Vladislav ([@WhiteFox123c](https://github.com/WhiteFox123c/))
+
+### Доработки
+
+Alexandr Shamanin (@slpAkkie)
