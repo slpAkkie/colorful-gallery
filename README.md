@@ -1,16 +1,16 @@
 # Viewer
 
-Compact image viewer with feature to sort them by color properties.
+Компактный обозреватель фотографий с возможностью сортировки по цветовым характеристикам
 
-## Getting started
+## Начало работы
 
-Use QtCreator to open this project
+Используйте `QtCreator`, чтобы открыть проект
 
-## Build
+## Сборка
 
-In project root directory
+Сборка происходит средствами `QtCreator`, но если необходимо собрать проект без его использования смотрите ниже
 
-### Debug
+### Сборка в режиме отладки
 
 ```sh
 mkdir -p build/Debug
@@ -22,7 +22,7 @@ make qmake_all
 make
 ```
 
-### Release
+### Сборка в режиме релиза
 
 ```sh
 mkdir -p build/Release
@@ -33,10 +33,14 @@ make qmake_all
 make
 ```
 
-## Version
+## Версия
 
-1.x-cpp-dev
+cpp-dev
 
-## Author
+## Автор
 
-Alexandr Shamanin (@slpAkkie). `Idea - Denyaev Vladislav (@WhiteFox123c)`
+Alexandr Shamanin (@slpAkkie)
+
+## Идея
+
+Denyaev Vladislav ([@WhiteFox123c](https://github.com/WhiteFox123c/))
